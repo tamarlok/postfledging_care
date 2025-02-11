@@ -1,7 +1,7 @@
 #rm(list=ls())
 load("data/processed/gps.behav.data.0327.RData")
 gps.behav.data.list.original <- gps.behav.data.list
-load("data/processed/gps.behav.beg.data.0527.RData")
+load("data/processed/gps.behav.beg.data.1203.RData")
 gps.behav.data.list.with.beg <- gps.behav.data.list
 rm(gps.data, gps.data.bird, gps.data.bird.year, gps.data.bird.year.autumn, gps.behav.data.list,
    chick_data, chick_parent_data, chick_parent1_data, chick_parent2_data)
@@ -89,5 +89,6 @@ names(overlay) # same # rows, just a few more columns (6 more than chick.parent.
 table(overlay$chick.parent, overlay$birthyear)
 
 chick.parent.data.behav.sel = overlay
+chick.parent.data.behav.sel$habitat.chick = chick.parent.data.behav.sel$habitat
 rm(overlay)
 # still to check which versions of chick.parent.data are used in subsequent analyses... (and remove unused versions)

@@ -1,3 +1,6 @@
+chick.parent.data.contact$dist.nest.chick = chick.parent.data.contact$dist.nest
+chick.parent.data.contact.sel$dist.nest.chick = chick.parent.data.contact.sel$dist.nest # can be removed when entire script has been rerun
+
 # plot distance between parents and their chick in relation to age, and coloured according to sex of chick and parent:
 windows(12,8)
 ggplot(data = chick.parent.data.contact,
@@ -15,35 +18,86 @@ ggplot(data = chick.parent.data.contact[chick.parent.data.contact$distance<50000
 # plot distance of chick from nest location in relation to age:
 windows(12,8)
 ggplot(data = chick.parent.data.contact,
-       aes(x = age.chick, y = dist.nest, color=sex.chick))+
+       aes(x = age.chick, y = dist.nest.chick, color=sex.chick))+
   geom_line()+
-  facet_wrap(~birdID.chick, scales = "fixed")
+  facet_wrap(~chick.parent, scales = "fixed")
 # same but now until 100 km:
 windows(12,8)
-ggplot(data = chick.parent.data.contact[chick.parent.data.contact$dist.nest<100000,],
-       aes(x = age.chick, y = dist.nest, color=sex.chick)) +
+ggplot(data = chick.parent.data.contact[chick.parent.data.contact$dist.nest.chick<100000,],
+       aes(x = age.chick, y = dist.nest.chick, color=sex.chick)) +
   geom_line()+
-  facet_wrap(~birdID.chick, scales = "fixed")+
+  facet_wrap(~chick.parent, scales = "fixed")+
   ylim(0,100000)
 # same but now until 25 km (cutting off the "serious" explorative flights):
 windows(12,8)
-ggplot(data = chick.parent.data.contact[chick.parent.data.contact$dist.nest<100000,],
-       aes(x = age.chick, y = dist.nest, color=sex.chick)) +
+ggplot(data = chick.parent.data.contact[chick.parent.data.contact$dist.nest.chick<100000,],
+       aes(x = age.chick, y = dist.nest.chick, color=sex.chick)) +
   geom_line()+
-  facet_wrap(~birdID.chick, scales = "fixed")+
+  facet_wrap(~chick.parent, scales = "fixed")+
   ylim(0,25000)
 
-# plot distance to nest during contact:
-chick.parent.contacts <- chick.parent.data.contact[chick.parent.data.contact$contact==1,]
+# plot distance of parent to the nest 
+chick.parent.data.contact$dist.nest.parent = round(distGeo(as.matrix(cbind(chick.parent.data.contact$longitude.parent, chick.parent.data.contact$latitude.parent)),
+                                                             as.matrix(cbind(chick.parent.data.contact$lon.nest, chick.parent.data.contact$lat.nest))),0)
+# plot data until 25 km:
 windows(12,8)
-ggplot(data = chick.parent.contacts,
-       aes(x = age.chick, y = dist.nest, color=sex.chick.parent)) +
+ggplot(data = chick.parent.data.contact[chick.parent.data.contact$dist.nest.parent<100000,],
+       aes(x = age.chick, y = dist.nest.parent/1000, color=sex.parent)) +
+  geom_line()+
+  facet_wrap(~chick.parent, scales = "fixed")+
+  ylim(0,25)
+
+# plot distance to nest during contact:
+windows(12,8)
+ggplot(data = chick.data.actual.contact,
+       aes(x = age.chick, y = dist.nest.chick, color=sex.chick.parent)) +
   geom_point()+
   facet_wrap(~chick.parent, scales = "fixed")+
   ggtitle("Distance from nest during contact")+
   xlab("Age of chick (days)")+
-  ylab("Distance to nest (m)")
+  ylab("Distance to nest (m)")+
+  ylim(0,25000)
 # this was never more than 18 km (but because of the criterion of at least 130 joint GPS locations, the short contact between 6295 & 6288 during southward migration (at Slikken Flakkee) was excluded...)
+
+aggregate(contact~age.chick, chick.parent.data.contact[chick.parent.data.contact$chick.parent=='6295-6288',], sum)
+
+### FIGURE S4 ###
+# Plot distance to the nest of chicks and parents and add dots at the moments where the chick was in contact with the parent
+# For this plot, use the raw data, so that the departure on autumn migration is also visible. This is the file chick.parent.data.sel 
+chick.parent.data.sel = chick.parent.data.sel[order(chick.parent.data.sel$birthyear, chick.parent.data.sel$birdID.chick),]
+chick.parent.data.sel$dist.nest.parent = round(distGeo(as.matrix(cbind(chick.parent.data.sel$longitude.parent, chick.parent.data.sel$latitude.parent)),
+                                                           as.matrix(cbind(chick.parent.data.sel$lon.nest, chick.parent.data.sel$lat.nest))),0)
+chick.parent.data.sel$dist.nest.chick = round(distGeo(as.matrix(cbind(chick.parent.data.sel$longitude.chick, chick.parent.data.sel$latitude.chick)),
+                                                       as.matrix(cbind(chick.parent.data.sel$lon.nest, chick.parent.data.sel$lat.nest))),0)
+
+windows(16,8)
+layout(matrix(1:16, nrow=4, byrow=T))
+par(mar=c(1,1,0,0), oma=c(4,4,1,1))
+panelnr=0
+ymax=50000
+for (i in unique(chick.parent.data.contact$chick.parent)) { # but only for the chick-parent pairs with enough data:
+  panelnr=panelnr+1
+  sex.parent.n = ifelse(chick.parent.data.sel$sex.parent[chick.parent.data.sel$chick.parent==i][1]=='f',1,2)
+  plot(dist.nest.parent~age.chick, data = chick.parent.data.sel[chick.parent.data.sel$chick.parent==i,], xlim=c(35,140), ylim=c(0,ymax), type='l', xlab="", ylab="", xaxt='n', yaxt='n', col=c('orange','lightskyblue')[sex.parent.n])
+  lines(dist.nest.chick~age.chick, data = chick.parent.data.sel[chick.parent.data.sel$chick.parent==i,])
+  # overlay a dashed line for the parents again, so that the similar departure of 6295 and 6288 is visible as well as a similar long-distance flight by 6354-6298 (both >120d, so only overlay this part so that for the rest, the line of the chick is better visible:
+  lines(dist.nest.parent~age.chick, data = chick.parent.data.sel[chick.parent.data.sel$chick.parent==i&chick.parent.data.sel$age.chick>120,], col=c('orange','lightskyblue')[sex.parent.n], lty='dashed')
+  points(dist.nest.chick~age.chick, data = chick.parent.data.sel[chick.parent.data.sel$chick.parent==i&chick.parent.data.sel$contact==1,], col='red')
+  if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,5000), labels=seq(0,ymax,5000)/1000, las=1)
+  if (panelnr %in% 13:16) axis(1, at=seq(40,140,10), las=1)
+  text(35,0.95*ymax,i, adj=0)
+}
+mtext("Distance to the nest (km)",2,2,outer=T)
+mtext("Chick age (days)",1,2,outer=T)
+### END FIGURE S4 ###
+
+max(chick.data.actual.contact$dist.nest.chick)/1000 # max distance to nest during contact was 17,3 km. 
+
+contact.chickparentpair.age = table(chick.data.actual.contact$chick.parent, chick.data.actual.contact$age.chick)
+contact.chickparentpair.age[,(dim(contact.chickparentpair.age)[2]-1):dim(contact.chickparentpair.age)[2]]
+# at which age was the last contact per chick-parent pair?
+max.age.contact.chkprnt = aggregate(age.chick~chick.parent, chick.data.actual.contact, max)
+median(max.age.contact.chkprnt$age.chick)
 
 # average distance to nest during contact per chick age pooled per 5 days. 
 # for this, we use the dataset cut at chick age = 35-90 days
@@ -51,7 +105,7 @@ chick.parent.data.contact.sel = chick.parent.data.contact.sel[order(chick.parent
 chick.parent.data.contact.sel$age5.chick = round((chick.parent.data.contact.sel$age.chick+2)/5,0)*5-2 # bin age into 5-day classes (36-40=38, 41-45=43 etc.). We add age 35 to the 36-40 class (=38)
 chick.parent.data.contact.sel$age5.chick[chick.parent.data.contact.sel$age.chick==35]=38
 unique(chick.parent.data.contact.sel[order(chick.parent.data.contact.sel$age.chick),c('age.chick','age5.chick')])
-mean.distance.to.nest <- aggregate(dist.nest~age5.chick, chick.parent.data.contact.sel, mean)
+mean.distance.to.nest <- aggregate(dist.nest.chick~age5.chick, chick.parent.data.contact.sel, mean)
 
 data.contacts <- aggregate(cbind(freq,contact)~birdID.chick+birdID.parent+chick.parent+age.chick+sex.chick+sex.parent+sex.chick.parent+yday+birthyear, chick.parent.data.contact.sel, sum)
 data.contacts <- data.contacts[order(data.contacts$birthyear, data.contacts$birdID.chick, data.contacts$yday),]
@@ -90,77 +144,200 @@ ggplot(data = data.contacts[data.contacts$age.chick<=90,],
   theme_bw()
 ### End Figure 2 ###
 
-# now make population-level predictions from the model with random slope: 
-real.age = 38:136
-z.age = (real.age-mean(chick.parent.data.contact.sel$age.chick))/sd(chick.parent.data.contact.sel$age.chick)
-summary(m.contact.chickprntagernd)
-summary(m.contact.chickprntagernd.parsim)
-mcfix = fixef(m.contact.chickprntagernd.parsim) # only the age effect is significant!
-predicted.prop = plogis(mcfix[1]+mcfix[2]*z.age)
-windows()
-plot(real.age, predicted.prop, pch=19, cex=0.6, ylim=c(0,0.15), type='l', lwd=2, xlab="Chick age", ylab="Proportion of contact")
-# add the data points to this graph (1 point per chick-parent pair per age class, and then calculating the average of these points according to parent sex):
-prop.contact.age.pair = aggregate(contact~age.chick+sex.chick+sex.parent+chick.parent+birdID.chick+birthyear, chick.parent.data.contact.sel, mean)
-# calculate mean of population:
-min.prop = min(prop.contact.age.pair$contact[prop.contact.age.pair$contact>0])
-min.prop = 0.001 # 0.007 is still quite high...
-prop.contact.age.pair$contact.adj = prop.contact.age.pair$contact
-prop.contact.age.pair$contact.adj[prop.contact.age.pair$contact.adj==0]=min.prop
-mean.logit <- function(x) mean(qlogis(x))
-sd.logit <- function(x) sd(qlogis(x))
-mean.prop.contact.age <- ddply(prop.contact.age.pair, .(age.chick), summarize, N  = length(contact.adj), mean.contact = mean(contact), mean.contact.logit = mean.logit(contact.adj), sd.contact.logit = sd.logit(contact.adj)) 
-mean.prop.contact.age$se.contact.logit = mean.prop.contact.age$sd.contact.logit/sqrt(mean.prop.contact.age$N)
-mean.prop.contact.age$mean.contact.from.logit = plogis(mean.prop.contact.age$mean.contact.logit)
-plot(mean.contact~mean.contact.from.logit, mean.prop.contact.age)
-mean.prop.contact.age$CI.min = plogis(mean.prop.contact.age$mean.contact.logit-1.96*mean.prop.contact.age$se.contact.logit)
-mean.prop.contact.age$CI.max = plogis(mean.prop.contact.age$mean.contact.logit+1.96*mean.prop.contact.age$se.contact.logit)
-plotCI(mean.prop.contact.age$age.chick, mean.prop.contact.age$mean.contact.from.logit, li=mean.prop.contact.age$CI.min, ui=mean.prop.contact.age$CI.max, sfrac=0, add=T)
-points(mean.prop.contact.age$age.chick, mean.prop.contact.age$mean.contact, cex=2)
-# now pooling all points per age class (pooling data across all chicks):
-prop.contact.age = aggregate(contact~age.chick, chick.parent.data.contact.sel, mean)
-points(prop.contact.age$age.chick, prop.contact.age$contact, cex=2, col='red') # very similar to mean.prop.contact.age mean.contact (which is calculated using normal 'mean', instead of 'mean.logit')
-# the fitted line really doesn't match the means (calculated from logit-values); is this because of the fitted random slopes? 
-
-# what if we do not model random slopes, but just a population level correlation between the proportion of contact and chick age:
-m.contact.age = glm(contact~age.chick, chick.parent.data.contact.sel, family='binomial')
-curve(plogis(coef(m.contact.age)[1]+coef(m.contact.age)[2]*x), add=T, col='red') # then the line perfectly fits the normally calculated means (not the means calculated via the logit function)
-# so, this means that for the raw data, we should use the normal mean function to calculate means.
-m.contact.zage = glm(contact~z.age, chick.parent.data.contact.sel, family='binomial')
-predict(m.contact.zage, newdata=data.frame(z.age=z.age), type='response')
-#m.contact.chickagernd.age = glmer(contact~z.age+(z.age|birdID.chick), data=chick.parent.data.contact.sel, family='binomial', na.action='na.fail')
-plogis(predict(m.contact.chickagernd.age, newdata=data.frame(z.age=z.age), re.form=NA)) 
-# indeed, the random effect causes the population-level estimates to be quite different... 
-
-points(contact~age.chick, prop.contact.age.pair[prop.contact.age.pair$sex.parent=='f',], col='red')
-points(contact~age.chick, prop.contact.age.pair[prop.contact.age.pair$sex.parent=='m',], col='blue')
-mean.prop.contact.ageclass.pair <- ddply(chick.parent.data.contact.sel, .(age5.chick, sex.chick, sex.parent, chick.parent, birdID.chick, birthyear), summarize, N  = length(contact), contact = mean(contact)) 
-# only select means based on at least 3x 130 samples (i.e. 3 days of nearly complete data)
-mean.prop.contact.ageclass.pair = mean.prop.contact.ageclass.pair[mean.prop.contact.ageclass.pair$N>2*130,]
-
-# calculate mean of proportions by first taking the logit
-min.prop = min(mean.prop.contact.ageclass.pair$contact[mean.prop.contact.ageclass.pair$contact>0])
-mean.prop.contact.ageclass.pair$contact.adj = mean.prop.contact.ageclass.pair$contact
-mean.prop.contact.ageclass.pair$contact.adj[mean.prop.contact.ageclass.pair$contact.adj==0]=min.prop
-mean.logit <- function(x) plogis(mean(qlogis(x)))
-mean.prop.contact.ageclass.sexp = aggregate(contact.adj~age5.chick+sex.parent, mean.prop.contact.ageclass.pair, mean.logit)
-points(contact.adj~age5.chick, mean.prop.contact.ageclass.sexp[mean.prop.contact.ageclass.sexp$sex.parent=='f',], col='red', cex=2, pch=19)
-points(contact.adj~age5.chick, mean.prop.contact.ageclass.sexp[mean.prop.contact.ageclass.sexp$sex.parent=='m',], col='blue', cex=2, pch=19)
-
-# now plot the individual fits of the model to each parent-chick pair:
-# now predict for each chick-parent pair separately (population-level predictions with CI are not possible with glmer objects, it seems...)
-data.pred = unique(chick.parent.data.contact.sel[,c('sex.parent','sex.chick','z.age','age.chick','birdID.chick','chick.parent')])
-data.pred$pred = plogis(predict(m.contact.chickagernd.parsim, newdata = data.pred))
-
-# calculate mean proportion of contact per ageclass per chickID and parent sex: 
-windows()
-plot(contact~age5.chick, mean.prop.contact.ageclass.pair, pch=19, cex=0.6, type="n")
-points(contact~age5.chick, mean.prop.contact.ageclass.pair[mean.prop.contact.ageclass.pair$sex.parent=='f',], pch=19, cex=0.6, col='red')
-points(contact~age5.chick, mean.prop.contact.ageclass.pair[mean.prop.contact.ageclass.pair$sex.parent=='m',], pch=19, cex=0.6, col='blue')
-for(i in unique(data.pred$birdID.chick)) {
-  data.pred.chick = data.pred[data.pred$birdID.chick==i,]
-  lines(pred~age.chick, data.pred.chick[data.pred.chick$sex.parent=='f',], pch=19, cex=0.6, col='red')
-  lines(pred~age.chick, data.pred.chick[data.pred.chick$sex.parent=='m',], pch=19, cex=0.6, col='blue')
+# now manually calculate means and SE, until age 90:
+# I used chatGPT to verify how to calculate 95% CI for proportion data. To avoid the 95% CI to get below 0 or above 1, the (1) Clopper-Pearson Exact Confidence Interval or the (2) Wilson Score Interval or (3) bootstrapping can be used.
+# These are calculated as follows:
+# (1) Clopper-Pearson Exact Confidence Interval
+proportions = data.contacts$prop.contact
+# Total number of observations and successes
+n <- length(proportions)
+x <- sum(proportions)  # Sum of proportions represents "successes"
+# Exact binomial confidence interval
+result <- binom.test(x = round(x), n = n, conf.level = 0.95)
+print(result$conf.int)
+# (2) Wilson Score Confidence Interval
+result <- prop.test(x = round(x), n = n, conf.level = 0.95, correct = FALSE)
+print(result$conf.int)
+# (3) Bootstrapping
+library(boot)
+# Function to calculate the mean
+mean_func <- function(data, indices) {
+  mean(data[indices])
 }
+# Perform bootstrap
+set.seed(123)  # For reproducibility
+boot_result <- boot(data = proportions, statistic = mean_func, R = 10000)
+# Calculate 95% CI
+boot_ci <- boot.ci(boot_result, type = "perc")
+print(boot_ci) # produces a narrower 95% CI than the other methods... 
+
+# The first two methods produce nearly identical 95% CI, so I tend to opt for one of these methods. As Wilson Score is shorter, I choose this one :).
+# Bootstrapping takes quite a long time...
+calculate.Wilson.score.interval <- function(x) {
+  n <- length(x)
+  xsum <- sum(x)  # Sum of proportions represents "successes"
+  result <- prop.test(x = round(xsum), n = n, conf.level = 0.95, correct = FALSE)
+  result$conf.int
+}
+
+calculate.bootstrap.interval <- function(x) {
+  boot_result <- boot(data = x, statistic = mean_func, R = 10000)
+  boot_ci <- boot.ci(boot_result, type = "perc")
+  boot_ci$percent
+}
+
+# the below code only works when sample size per age class is at least two, otherwise it produces an error. 
+prop.contact.age = ddply(data.contacts[data.contacts$age.chick<100,], .(age.chick), summarize, 
+                         N=length(prop.contact), mean = mean(prop.contact), 
+                         CImin.Wilson = calculate.Wilson.score.interval(prop.contact)[1], CImax.Wilson = calculate.Wilson.score.interval(prop.contact)[2], 
+                         CImin.boot = calculate.bootstrap.interval(prop.contact)[4], CImax.boot = calculate.bootstrap.interval(prop.contact)[5])
+# warnings are produced by too low sample size to get reliable estimates of Wilson CI. 
+# only show estimates based on at least 10 different chicks:
+prop.contact.age.sel = prop.contact.age[prop.contact.age$N>=10,]
+plotCI(prop.contact.age.sel$age.chick, prop.contact.age.sel$mean, li=prop.contact.age.sel$CImin.Wilson, ui=prop.contact.age.sel$CImax.Wilson, 
+       sfrac=0, ylim=c(0,0.4))
+plotCI(prop.contact.age.sel$age.chick+0.1, prop.contact.age.sel$mean, li=prop.contact.age.sel$CImin.boot, ui=prop.contact.age.sel$CImax.boot, 
+       sfrac=0, add=T, col='red')
+# as with the Wilson's CI, you would really conclude there is no significant decline in proportion of contact, while with the bootstrap CI there is. So this appears to be a more realistic CI. 
+
+plotCI(prop.contact.age.sel$age.chick, prop.contact.age.sel$mean, li=prop.contact.age.sel$CImin.boot, ui=prop.contact.age.sel$CImax.boot, 
+       sfrac=0, xlim=c(35,92), ylim=c(0,0.25), pch=21, pt.bg='grey', xlab='Chick age (days)', ylab='Proportion of contact')
+# The model (with chickID as random effect) indicates that there is a significant effect of parent sex on the amount of contact. So perhaps also plot this difference?
+prop.contact.age.sexp = ddply(data.contacts[data.contacts$age.chick<100,], .(age.chick, sex.parent), summarize, 
+                              N=length(prop.contact), mean = mean(prop.contact), CImin.Wilson = calculate.Wilson.score.interval(prop.contact)[1], 
+                         CImin.boot = calculate.bootstrap.interval(prop.contact)[4], CImax.boot = calculate.bootstrap.interval(prop.contact)[5])
+prop.contact.age.sexp[prop.contact.age.sexp$age.chick>89,]
+# only show estimates based on at least 6 different chicks:
+prop.contact.age.mothers = prop.contact.age.sexp[prop.contact.age.sexp$sex.parent=='f' & prop.contact.age.sexp$N>5,]
+prop.contact.age.fathers = prop.contact.age.sexp[prop.contact.age.sexp$sex.parent=='m' & prop.contact.age.sexp$N>5,]
+plotCI(prop.contact.age.mothers$age.chick-0.07, prop.contact.age.mothers$mean, li=prop.contact.age.mothers$CImin.boot, ui=prop.contact.age.mothers$CImax.boot, sfrac=0, xlim=c(35,92), ylim=c(0,0.3), pch=21, pt.bg="lightcoral", col='coral4')
+plotCI(prop.contact.age.fathers$age.chick+0.07, prop.contact.age.fathers$mean, li=prop.contact.age.fathers$CImin.boot, ui=prop.contact.age.fathers$CImax.boot, sfrac=0, pch=21, pt.bg="lightskyblue", col='lightskyblue4', add=T)
+# plotting the two sexes separately in the same panel becomes quite messy... 
+
+# Make population-level predictions on proportion contact based on the most parsimonious model  
+# with weighted average over the three years, based on the number of chicks in the different years (7 in 2016, 4 in 2017 and 3 in 2018; 14 in total):
+real.age = 35:136
+z.age = (real.age-mean(chick.parent.data.contact.sel$age.chick))/sd(chick.parent.data.contact.sel$age.chick)
+pred.age.sexp = expand.grid(sex.parent=c("f","m"), real.age = real.age)
+pred.age.sexp$z.age = (real.age-mean(chick.parent.data.contact.sel$age.chick))/sd(chick.parent.data.contact.sel$age.chick)
+summary(m.contact.parsim)
+mcfix = fixef(m.contact.parsim) 
+predicted.prop.pf = plogis(mcfix[1]+4/14*mcfix[4]+3/14*mcfix[5] + mcfix[3]*z.age)
+predicted.prop.pm = plogis(mcfix[1]+4/14*mcfix[4]+3/14*mcfix[5] + mcfix[2] + mcfix[3]*z.age)
+
+chick.parent.data.contact.sel$pred.contact = predict(m.contact.parsim, newdata=chick.parent.data.contact.sel)
+pred.data = expand.grid(age.chick=30:100, sex.parent=c('f','m'), yearf=factor(2016:2018))
+pred.data$z.age = (pred.data$age.chick-mean(pred.data$age.chick))/sd(pred.data$age.chick)
+pred.data$pred.contact.pop = predict(m.contact.parsim, newdata=pred.data, re.form=NA, type='response')
+pred.data[pred.data$age.chick==40,]
+pred.data$pred.contact.weight = pred.data$pred.contact.pop*(7/14) # weight in 2016
+pred.data$pred.contact.weight[pred.data$yearf==2017] = pred.data$pred.contact.pop[pred.data$yearf==2017]*(4/14) # weight in 2017
+pred.data$pred.contact.weight[pred.data$yearf==2018] = pred.data$pred.contact.pop[pred.data$yearf==2018]*(3/14) # weight in 2018
+pred.data$freq = 1
+# sum up pred.weight to get the weighted prediction over the three years:
+weighted.pred.pop = aggregate(cbind(pred.contact.weight, freq)~age.chick+sex.parent, pred.data, sum)
+# averaged over males and females:
+mean.pred.pop = aggregate(pred.contact.weight~age.chick, weighted.pred.pop, mean)
+mean.pred.pop[mean.pred.pop$age.chick==40,] # 8.4%
+mean.pred.pop[mean.pred.pop$age.chick==90,] # 2.6%
+# calculate the mean begging contact probability:
+pred.data$pred.begcontact.pop = predict(m.begging.contact.parsim, newdata=pred.data, re.form=NA, type='response')
+pred.data$pred.begcontact.weight = pred.data$pred.begcontact.pop*(7/14) # weight in 2016
+pred.data$pred.begcontact.weight[pred.data$yearf==2017] = pred.data$pred.begcontact.pop[pred.data$yearf==2017]*(4/14) # weight in 2017
+pred.data$pred.begcontact.weight[pred.data$yearf==2018] = pred.data$pred.begcontact.pop[pred.data$yearf==2018]*(3/14) # weight in 2018
+# sum up pred.weight to get the weighted prediction over the three years:
+weighted.pred.begcontact.pop = aggregate(cbind(pred.begcontact.weight, freq)~age.chick+sex.parent, pred.data, sum)
+# averaged over males and females:
+mean.pred.begcontact.pop = aggregate(pred.begcontact.weight~age.chick, weighted.pred.begcontact.pop, mean)
+mean.pred.begcontact.pop[mean.pred.begcontact.pop$age.chick==40,] # 0.3% 
+mean.pred.begcontact.pop[mean.pred.begcontact.pop$age.chick==90,] # 0.06%
+# % of contact time that the chick is begging:
+(mean.pred.begcontact.pop$pred.begcontact.weight/mean.pred.pop$pred.contact.weight)[mean.pred.pop$age.chick==40] # 4.0%
+(mean.pred.begcontact.pop$pred.begcontact.weight/mean.pred.pop$pred.contact.weight)[mean.pred.pop$age.chick==90] # 2.5%
+# averaged over all ages
+mean(mean.pred.begcontact.pop$pred.begcontact.weight/mean.pred.pop$pred.contact.weight) # 3.2%
+
+
+
+windows()
+plotCI(prop.contact.age.mothers$age.chick-0.07, prop.contact.age.mothers$mean, li=prop.contact.age.mothers$CImin.boot, ui=prop.contact.age.mothers$CImax.boot, sfrac=0, xlim=c(35,xmax), ylim=c(0,ymax), pch=21, pt.bg="lightcoral", col='coral4', xlab="", ylab='', xaxt='n', las=1)
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='f' & pred.data$yearf==2016,], col='lightcoral')
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='f' & pred.data$yearf==2017,], col='lightcoral')
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='f' & pred.data$yearf==2018,], col='lightcoral')
+lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='f',], col='lightcoral', lwd=2) 
+lines(real.age, predicted.prop.pf, lwd=2, col='coral4')
+# I had expected that the two weighted population-level predictions, either using the fixed effect estimates or the prediction function while ignoring the random effects, would give the same result. But they don't...
+# As the lightcoral line (using the prediction function) fits the data much better, I think this one is correct. 
+plotCI(prop.contact.age.fathers$age.chick+0.07, prop.contact.age.fathers$mean, li=prop.contact.age.fathers$CImin.boot, ui=prop.contact.age.fathers$CImax.boot, sfrac=0, xlim=c(35,92), ylim=c(0,0.3), pch=21, pt.bg="lightskyblue", col='lightskyblue4', xlab="", ylab="", xaxt='n', yaxt='n')
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='m' & pred.data$yearf==2016,], col='lightskyblue')
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='m' & pred.data$yearf==2017,], col='lightskyblue')
+lines(pred.contact.pop~age.chick, pred.data[pred.data$sex.parent=='m' & pred.data$yearf==2018,], col='lightskyblue')
+lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='m',], col='lightskyblue', lwd=2) 
+lines(real.age, predicted.prop.pm, lwd=2, col='lightskyblue4')
+
+# Make the same calculations for the distance to the nest during contact:
+calculate.mean.dist.km = function(x) round(mean(x)/1000,2)
+mean.distance.chick.age.sexp = aggregate(dist.nest.chick~birdID.chick+age.chick+sex.parent, chick.data.actual.contact, calculate.mean.dist.km)
+calculate.se <- function(x) {
+  N = length(x)
+  sd = sd(x)
+  se = sd/sqrt(N)
+  se
+}
+distance.contact.age.sexp = ddply(mean.distance.chick.age.sexp[mean.distance.chick.age.sexp$age.chick<100,], .(age.chick, sex.parent), summarize, 
+                                  N=length(dist.nest.chick), mean = mean(dist.nest.chick), se = calculate.se(dist.nest.chick))
+# and predictions from the most parsim model:
+hist(chick.data.actual.contact$dist.nest.chick) # this is definitely not normally distributed; poisson distribution might be preferred. 
+m.dist.nest.parsim = lmer(dist.nest.chick/1000~sex.parent+z.age+(z.age|birdID.chick), chick.data.actual.contact, na.action='na.fail', REML=T)
+m.dist.nest.log.parsim = lmer(log.dist.nest.chick~sex.parent+z.age+(z.age|birdID.chick), chick.data.actual.contact, na.action='na.fail', REML=T)
+m.dist.nest.parsim.gamma = glmer(dist.nest.chick.km~sex.parent+z.age+(z.age|birdID.chick), chick.data.actual.contact, na.action='na.fail', family=Gamma(link='log'))
+pred.data$pred.dist.pop = predict(m.dist.nest.parsim.gamma, newdata=pred.data, re.form=NA, type='response')
+# remove the year effect, as not relevant for the distance:
+pred.data.dist = unique(pred.data[,c('age.chick','sex.parent','pred.dist.pop')])
+plotCI(distance.contact.age.mothers$age.chick, distance.contact.age.mothers$mean, uiw=1.96*distance.contact.age.mothers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightcoral', col='coral4', las=1, xlim=c(35,xmax), ylim=c(0,13))
+lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='f',], col='lightcoral', lwd=2) 
+plotCI(distance.contact.age.fathers$age.chick, distance.contact.age.fathers$mean, uiw=1.96*distance.contact.age.fathers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightskyblue', col='lightskyblue4', las=1, xlim=c(35,xmax), ylim=c(0,13), yaxt='n')
+lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='m',], col='lightskyblue', lwd=2) 
+
+
+### FIGURE 2 ###
+windows(12,8)
+layout(matrix(1:4, ncol=2, byrow=T))
+par(mar=c(1,1,0,0), oma=c(4,4,2,1), xaxs='i')
+## (A) Overall probability of contact with the mother
+ymax=0.3
+xmax=91
+plotCI(prop.contact.age.mothers$age.chick-0.07, prop.contact.age.mothers$mean, li=prop.contact.age.mothers$CImin.boot, ui=prop.contact.age.mothers$CImax.boot, sfrac=0, xlim=c(35,xmax), ylim=c(0,ymax), pch=21, pt.bg="lightcoral", col='coral4', xlab="", ylab='', xaxt='n', las=1)
+lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='f',], col='lightcoral') 
+mtext("with mother",line=0.2)
+mtext("Proportion of contact",2,3.5)
+axis(1,at=seq(40,90,10),labels=F)
+text(xmax-2,0.985*ymax,"(a)")
+## (B) Overall probability of contact with the father
+plotCI(prop.contact.age.fathers$age.chick+0.07, prop.contact.age.fathers$mean, li=prop.contact.age.fathers$CImin.boot, ui=prop.contact.age.fathers$CImax.boot, sfrac=0, xlim=c(35,92), ylim=c(0,0.3), pch=21, pt.bg="lightskyblue", col='lightskyblue4', xlab="", ylab="", xaxt='n', yaxt='n')
+lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='m',], col='lightskyblue') 
+mtext("with father", line=0.2)
+axis(1,at=seq(40,90,10),labels=F)
+axis(2,at=seq(0,0.3,0.05),labels=F)
+text(xmax-2,0.985*ymax,"(b)")
+# only plot distance data based on at least three chick-parent pairs that still had (some) contact
+distance.contact.age.fathers = distance.contact.age.sexp[distance.contact.age.sexp$sex.parent=='m' & distance.contact.age.sexp$N>2,]
+distance.contact.age.mothers = distance.contact.age.sexp[distance.contact.age.sexp$sex.parent=='f' & distance.contact.age.sexp$N>2,]
+## (C) Distance to the nest during contact with mother 
+ymax=13
+plotCI(distance.contact.age.mothers$age.chick, distance.contact.age.mothers$mean, uiw=1.96*distance.contact.age.mothers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightcoral', col='coral4', las=1, xlim=c(35,xmax), ylim=c(0,ymax))
+lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='f',], col='lightcoral') 
+mtext("Distance to nest during contact (km)",2,3.5)
+text(xmax-2,0.985*ymax,"(c)")
+## (D) Distance to the nest during contact with father 
+plotCI(distance.contact.age.fathers$age.chick, distance.contact.age.fathers$mean, uiw=1.96*distance.contact.age.fathers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightskyblue', col='lightskyblue4', las=1, xlim=c(35,xmax), ylim=c(0,13), yaxt='n')
+lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='m',], col='lightskyblue') 
+axis(2,at=seq(0,12,2),labels=F)
+mtext("Chick age (days)", 1, 2, outer=T)
+text(xmax-2,0.985*ymax,"(d)")
+### END FIGURE 2 ###
+
+
 
 # now make separate panel for each chickID:
 # first determine chick age at chick and parent departure date:
@@ -185,8 +362,12 @@ for(i in unique(data.pred$birdID.chick)) {
   pred.chick = data.pred[data.pred$birdID.chick==i,]
   plot(contact~age.chick, data.chick, pch=19, cex=0.6, type="n", xlim=c(35,140), ylim=c(0,ymax), xaxt='n', yaxt='n')
   # box(col=chickcol)
-  points(contact~age.chick, data.chick[data.chick$sex.parent=='f',], pch=21, bg="lightcoral", col='coral4')
-  points(contact~age.chick, data.chick[data.chick$sex.parent=='m',], pch=21, bg="lightskyblue", col='lightskyblue4')
+  # first plot white-filled points with zero-contact:
+  points(contact~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact==0,], pch=21, bg="white", col='coral4')
+  points(contact~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact==0,], pch=21, bg="white", col='lightskyblue4')
+  # then plot colour-filled points with >0 contact:
+  points(contact~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact>0,], pch=21, bg="lightcoral", col='coral4')
+  points(contact~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact>0,], pch=21, bg="lightskyblue", col='lightskyblue4')
   lines(pred~age.chick, pred.chick[pred.chick$sex.parent=='f',], col='coral4', lwd=2)
   lines(pred~age.chick, pred.chick[pred.chick$sex.parent=='m',], col='lightskyblue4', lwd=2)
   # add vertical lines for chick age at departure date of chick and parent:
@@ -211,7 +392,7 @@ mtext("Proportion of contact",2,2,outer=T)
 ### FIGURE S2 ###
 ## Plot individual variation in probability of begging at parent and foraging close to parent:
 prop.contact.begging.foraging.age.pair = aggregate(cbind(contact.begging, contact.foraging)~age.chick+sex.chick+sex.parent+chick.parent+birdID.chick+birthyear, chick.parent.data.behav.beg, mean)
-data.pred$pred.begging.contact = plogis(predict(m.begging.contact.pars, newdata = data.pred))
+data.pred$pred.begging.contact = plogis(predict(m.begging.contact, newdata = data.pred))
 data.pred$pred.foraging.contact = plogis(predict(m.foraging.contact.pars, newdata = data.pred))
 windows(12,8)
 layout(matrix(1:16, nrow=4, byrow=T))
@@ -224,9 +405,12 @@ for(i in unique(data.pred$birdID.chick)) {
   if (data.chick$sex.chick[1]=='f') chickcol='coral4' else chickcol='lightskyblue4'
   pred.chick = data.pred[data.pred$birdID.chick==i,]
   plot(contact.begging~age.chick, data.chick, pch=19, cex=0.6, type="n", xlim=c(35,140), ylim=c(0,ymax), xaxt='n', yaxt='n')
-  # box(col=chickcol)
-  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='f',], pch=21, bg="lightcoral", col='coral4')
-  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='m',], pch=21, bg="lightskyblue", col='lightskyblue4')
+  # first plot white-filled points with zero-contact:
+  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact.begging==0,], pch=21, bg="white", col='coral4')
+  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact.begging==0,], pch=21, bg="white", col='lightskyblue4')
+  # then plot colour-filled points with >0 contact:
+  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact.begging>0,], pch=21, bg="lightcoral", col='coral4')
+  points(contact.begging~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact.begging>0,], pch=21, bg="lightskyblue", col='lightskyblue4')
   lines(pred.begging.contact~age.chick, pred.chick[pred.chick$sex.parent=='f',], col='coral4', lwd=2)
   lines(pred.begging.contact~age.chick, pred.chick[pred.chick$sex.parent=='m',], col='lightskyblue4', lwd=2)
   # add vertical lines for chick age at departure date of chick and parent:
@@ -260,9 +444,12 @@ for(i in unique(data.pred$birdID.chick)) {
   if (data.chick$sex.chick[1]=='f') chickcol='coral4' else chickcol='lightskyblue4'
   pred.chick = data.pred[data.pred$birdID.chick==i,]
   plot(contact.foraging~age.chick, data.chick, pch=19, cex=0.6, type="n", xlim=c(35,140), ylim=c(0,ymax), xaxt='n', yaxt='n')
-  # box(col=chickcol)
-  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='f',], pch=21, bg="lightcoral", col='coral4')
-  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='m',], pch=21, bg="lightskyblue", col='lightskyblue4')
+  # first plot white-filled points with zero-contact:
+  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact.foraging==0,], pch=21, bg="white", col='coral4')
+  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact.foraging==0,], pch=21, bg="white", col='lightskyblue4')
+  # then plot colour-filled points with >0 contact:
+  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='f'&data.chick$contact.foraging>0,], pch=21, bg="lightcoral", col='coral4')
+  points(contact.foraging~age.chick, data.chick[data.chick$sex.parent=='m'&data.chick$contact.foraging>0,], pch=21, bg="lightskyblue", col='lightskyblue4')
   lines(pred.foraging.contact~age.chick, pred.chick[pred.chick$sex.parent=='f',], col='coral4', lwd=2)
   lines(pred.foraging.contact~age.chick, pred.chick[pred.chick$sex.parent=='m',], col='lightskyblue4', lwd=2)
   # add vertical lines for chick age at departure date of chick and parent:
@@ -294,38 +481,29 @@ load("data/processed/SMS.data.juvs.ads.RData")
 smsdata.6358 <- sms.data.ad.list[[33]] # Also the sms data had huge gaps (of sometimes months), therefore, departure date of 6358 could not be determined either. 
 
 
-# now plot only the population-level and chickID-level estimates in one figure:
-windows()
-plot(real.age, pc.fp, pch=19, cex=0.6, col='red', ylim=c(0,0.4), type='l', lwd=3, xlab="Chick age", ylab="Proportion of contact")
-lines(real.age, pc.mp, col='blue', lwd=3)
-for(i in unique(data.pred$birdID.chick)) {
-  pred.chick = data.pred[data.pred$birdID.chick==i & data.pred$age.chick%in%40:130,]
-  lines(pred~age.chick, pred.chick[pred.chick$sex.parent=='f',], pch=19, col='red', lty='dotted')
-  lines(pred~age.chick, pred.chick[pred.chick$sex.parent=='m',], pch=19, col='blue', lty='dotted')
-}  
 
-# this reveals that the individual variation is much larger than the estimated effects from the sex of the parent and sex of the chick... 
-
-### Plot distance to nest during contact ###
+# plot distance to nest of parents, irrespective of contact:
 windows()
-plot(dist.nest~age.chick, chick.data.actual.contact, type='n')
-points(dist.nest~age.chick, chick.data.actual.contact[chick.data.actual.contact$sex.parent=='f',], col='red')
-points(dist.nest~age.chick, chick.data.actual.contact[chick.data.actual.contact$sex.parent=='m',], col='blue')
-### FIGURE 2B - Distance to nest during contact ###
-# calculate means and SE on daily basis, first calculating daily mean distance to nest per chick:
-calculate.mean.dist.km = function(x) round(mean(x)/1000,2)
-mean.distance.day.chick = aggregate(dist.nest~age.chick+birdID.chick, chick.data.actual.contact, calculate.mean.dist.km)
+plot(dist.nest.parent~age.chick, chick.parent.data.behav.sel, type='n')
+points(dist.nest.parent~age.chick, chick.parent.data.behav.sel[chick.parent.data.behav.sel$sex.parent=='f',], col='red')
+points(dist.nest.parent~age.chick, chick.parent.data.behav.sel[chick.parent.data.behav.sel$sex.parent=='m',], col='blue')
+# calculate means and SE on daily basis, first calculating daily mean distance to nest per parent:
+mean.distance.parent.chickage = aggregate(dist.nest.parent~age.chick+birdID.parent+sex.parent, chick.parent.data.behav.sel, calculate.mean.dist.km)
 # now calculate means over all chicks per chick age:
-calculate.mean.rnd = function(x) round(mean(x),2)
-mean.distance.age = aggregate(dist.nest~age.chick, mean.distance.day.chick, calculate.mean.rnd)
-calculate.se = function(x) round(sd(x)/sqrt(length(x)),2)
-se.distance.age = aggregate(dist.nest~age.chick, mean.distance.day.chick, calculate.se)
-mean.se.distance.age = cbind(mean.distance.age, se.distance.age[,2])
-names(mean.se.distance.age)[2:3]=c('mean.dist.nest','se.dist.nest')
+mean.distance.age = aggregate(dist.nest.parent~age.chick+sex.parent, mean.distance.parent.chickage, calculate.mean.rnd)
+se.distance.age = aggregate(dist.nest.parent~age.chick+sex.parent, mean.distance.parent.chickage, calculate.se)
+mean.se.distance.age = cbind(mean.distance.age, se.distance.age[,3])
+names(mean.se.distance.age)[3:4]=c('mean.dist.nest.parent','se.dist.nest.parent')
+mean.se.distance.age.fathers = mean.se.distance.age[mean.se.distance.age$sex.parent=='m',]
+mean.se.distance.age.mothers = mean.se.distance.age[mean.se.distance.age$sex.parent=='f',]
 windows(8,5)
 par(mar=c(5,5,1,1))
-plotCI(mean.se.distance.age$age.chick, mean.se.distance.age$mean.dist.nest, uiw=mean.se.distance.age$se, sfrac=0, xlab='Chick age (days)', ylab='Distance to nest during contact (km)', pch=21, pt.bg='grey', las=1)
-### END FIGURE 2B ###
+plotCI(mean.se.distance.age.fathers$age.chick, mean.se.distance.age.fathers$mean.dist.nest.parent, uiw=mean.se.distance.age.fathers$se.dist.nest.parent, sfrac=0, xlab='Chick age (days)', ylab='Distance to nest of parent (km)', pch=21, pt.bg='lightskyblue', col='lightskyblue4', las=1, ylim=c(0,40))
+plotCI(mean.se.distance.age.mothers$age.chick+0.4, mean.se.distance.age.mothers$mean.dist.nest.parent, uiw=mean.se.distance.age.mothers$se.dist.nest.parent, sfrac=0, pch=21, pt.bg='lightcoral', col='coral4', add=T)
+legend("topleft", legend=c("Mother", "Father"), pch=21, col=c("coral4","lightskyblue4"), pt.bg=c("lightcoral","lightskyblue"))
+
+
+tail(chick.parent.data.behav.sel[chick.parent.data.behav.sel$birdID.parent==6284.2 & chick.parent.data.behav.sel$dist.nest.parent>25000,])
 
 # plot overall behaviours of chicks, irrespective of contact, including begging:
 chick.parent.data.behav.beg <- chick.parent.data.behav[!is.na(chick.parent.data.behav$behaviour.beg.chick),]
@@ -626,3 +804,7 @@ legend("bottomright", legend=c("mother","father"), pt.cex=2, cex=1.2, pch=21, pt
 # End Figure 3 #
 
 
+# Check age at certain dates for GPS-tagged chicks:
+chick.parent.data.contact.sel$date = round(chick.parent.data.contact.sel$datetime.chick, 'day')
+date.age.chick = unique(chick.parent.data.contact.sel[,c('birdID.chick','date','age.chick')])
+tail(chick.parent.data.contact.sel[chick.parent.data.contact.sel$birdID.chick==6315 & chick.parent.data.contact.sel$date==ymd("2018-08-21"),])

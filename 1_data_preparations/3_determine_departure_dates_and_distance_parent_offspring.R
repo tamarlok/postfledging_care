@@ -1,4 +1,3 @@
-load("data/processed/gps.data.from.movebank.0327.RData")
 source("functions.R")
 parents <- unique(parent_offspring_data$parentID)
 chicks <- unique(parent_offspring_data$chickID)
@@ -158,7 +157,7 @@ table(chick.parent.data$yday, chick.parent.data$chick.parent)
 chick.nest = unique(parent_offspring_nest_data[,c('chickID','latitude','longitude')])
 names(chick.nest)=c('chickID','lat.nest','lon.nest')
 chick.parent.data = merge(chick.parent.data, chick.nest, by.x='birdID.chick', by.y='chickID', all.x=T)
-chick.parent.data$dist.nest = round(distGeo(as.matrix(chick.parent.data[,c('longitude.chick','latitude.chick')]),
+chick.parent.data$dist.nest.chick = round(distGeo(as.matrix(chick.parent.data[,c('longitude.chick','latitude.chick')]),
                                          as.matrix(chick.parent.data[,c('lon.nest','lat.nest')])),0)
 # order the data:
 chick.parent.data <- chick.parent.data[order(chick.parent.data$birdID.chick, chick.parent.data$birdID.parent, chick.parent.data$datetime.chick),]

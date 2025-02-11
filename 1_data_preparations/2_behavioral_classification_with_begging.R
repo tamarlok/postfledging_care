@@ -1,6 +1,5 @@
-load("data/processed/model.classification.begging.0526.RData")
+load("data/processed/model.classification.begging.1202.RData")
 load("data/processed/acc.data.from.movebank.0327.RData")
-#load("D:/Tamar - Backup 2024-03-18/Analyses/22. Post-fledging parental care in spoonbills/postfledging_care/data/processed/acc.data.from.movebank.0327.RData")
 load("data/processed/gps.data.from.movebank.0327.RData")
 source('functions.R')
 gps.data <- from.list.to.df(gps.data.list)
@@ -11,7 +10,7 @@ rm(gps.data.list)
 
 gps.behav.data.list <- list()
 
-for (i in 13:length(acc.data.list)) {
+for (i in 1:length(acc.data.list)) {
   acc.data.bird <- acc.data.list[[i]]
   acc.data.bird <- acc.data.bird[,c('individual_local_identifier','tag_local_identifier','start_timestamp','timestamp','tilt_x','tilt_y','tilt_z')]
   
@@ -45,7 +44,7 @@ for (i in 13:length(acc.data.list)) {
   # predict behaviour from acc data and gps speed:
   data$obs.id <- paste(data$birdID, as.numeric(data$date_time), sep = ".")
   names(data)[7] = 'speed_2d'
-  seg.df <- create.fixed.segments(segment.length=.8, data=data)
+  seg.df <- create.fixed.segments(segment.length=1.6, data=data)
   seg.df$pred.behav <- predict(RF.model.with.begging, seg.df)
   # select the most occurring behaviour per GPS fix (i.e., date_time)
   # first pool behavioural categories
@@ -77,18 +76,3 @@ for (i in 13:length(acc.data.list)) {
 lapply(gps.behav.data.list, function(x) print(c(dim(x)[1], x$birdID[1])))
 
 keep(gps.behav.data.list, parent_offspring_data, gps.data, refdata_adults, refdata_juvs, sure=T)
-
-save.image("data/processed/gps.behav.beg.data.0527.RData")
-
-load("data/processed/gps.behav.beg.data.0526.RData") # on segments of 1.0 s, but not sure if the RF model went right, omdat er iets mis leek te gaan met de Indexing bij de create.fixed.segments functie (er stond toen nog Index+1, wsl omdat eerder Index met 0 begon, maar nu met 1).
-for(i in 1:length(gps.behav.data.list)) print(c(birdID=gps.behav.data.list[[i]]$birdID[1],round(table(gps.behav.data.list[[i]]$behaviour)/dim(gps.behav.data.list[[i]])[1],2)))
-
-load("data/processed/gps.behav.beg.data.0527.RData") # on segments of 0.8 s, 
-for(i in 1:length(gps.behav.data.list)) print(c(birdID=gps.behav.data.list[[i]]$birdID[1],round(table(gps.behav.data.list[[i]]$behaviour)/dim(gps.behav.data.list[[i]])[1],2)))
-
-head(gps.behav.data.list[[23]])
-
-gps.behav.data.list[[23]]$week <- week(gps.behav.data.list[[23]]$date_time)
-
-behav.6385 = round(table(gps.behav.data.list[[23]]$week, gps.behav.data.list[[23]]$behaviour),0)
-round(behav.6385[,'beg']/(behav.6385[,'beg']+behav.6385[,'foraging']),2)

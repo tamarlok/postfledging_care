@@ -216,18 +216,18 @@ RF.model.start <- function(seg.df, stand=1) {
 ## Calculate measures of classification performance for each behaviour class 
 calculate.performance <- function(RF.model.results) {
   RF.model.results <- RF.model.results[,is.na(colnames(RF.model.results))==F]
+
+  # if a certain behaviour was never observed in the test data, make it 0:
   if (max(colnames(RF.model.results)=="for-intake")==0) RF.model.results <- cbind(RF.model.results,"for-intake"=0)
   if (max(colnames(RF.model.results)=="for-handle")==0) RF.model.results <- cbind(RF.model.results,"for-handle"=0)
   if (max(colnames(RF.model.results)=="fly-soar")==0) RF.model.results <- cbind(RF.model.results,"fly-soar"=0)
-  if (max(colnames(RF.model.results)=="drink")==0) RF.model.results <- cbind(RF.model.results,"drink"=0)
-  if (max(colnames(RF.model.results)=="rest")==0) RF.model.results <- cbind(RF.model.results,"rest"=0)
+  
+  # if a certain behaviour was never predicted in the test data, make it 0:
   if (max(rownames(RF.model.results)=="for-intake")==0) RF.model.results <- rbind(RF.model.results,"for-intake"=0)
   if (max(rownames(RF.model.results)=="for-handle")==0) RF.model.results <- rbind(RF.model.results,"for-handle"=0)
   if (max(rownames(RF.model.results)=="fly-soar")==0) RF.model.results <- rbind(RF.model.results,"fly-soar"=0)
-  if (max(rownames(RF.model.results)=="drink")==0) RF.model.results <- rbind(RF.model.results,"drink"=0)
-  if (max(rownames(RF.model.results)=="rest")==0) RF.model.results <- rbind(RF.model.results,"rest"=0)
-  
-  RF.model.results <- RF.model.results[order(rownames(RF.model.results)),order(colnames(RF.model.results))] #   # order by column and rowname
+
+  RF.model.results <- RF.model.results[order(rownames(RF.model.results)),order(colnames(RF.model.results))] # order by column- and rowname
   cM <- confusionMatrix(as.table(RF.model.results))
   sensitivity <- cM$byClass[,"Sensitivity"] # 
   specificity <- cM$byClass[,"Specificity"] # or recall
@@ -236,6 +236,44 @@ calculate.performance <- function(RF.model.results) {
   list(sensitivity, specificity, precision, accuracy.overall, cM)
 }
 ### End of classification performance calculation
+
+## Calculate measures of classification performance for pooled behavours: resting, walking, foraging, flying, begging 
+calculate.performance.pooled <- function(RF.model.results) {
+  
+  RF.model.results <- RF.model.results[,is.na(colnames(RF.model.results))==F]
+  
+  # if a certain behaviour was never observed in the test data, make it 0:
+  if (max(colnames(RF.model.results)=="for-intake")==0) RF.model.results <- cbind(RF.model.results,"for-intake"=0)
+  if (max(colnames(RF.model.results)=="for-handle")==0) RF.model.results <- cbind(RF.model.results,"for-handle"=0)
+  if (max(colnames(RF.model.results)=="fly-soar")==0) RF.model.results <- cbind(RF.model.results,"fly-soar"=0)
+
+  # if a certain behaviour was never predicted in the test data, make it 0:
+  if (max(rownames(RF.model.results)=="for-intake")==0) RF.model.results <- rbind(RF.model.results,"for-intake"=0)
+  if (max(rownames(RF.model.results)=="for-handle")==0) RF.model.results <- rbind(RF.model.results,"for-handle"=0)
+  if (max(rownames(RF.model.results)=="fly-soar")==0) RF.model.results <- rbind(RF.model.results,"fly-soar"=0)
+
+  RF.model.results.pooled.cols = cbind(forage=rowSums(RF.model.results[,c('for-search','for-handle','for-intake')]), 
+                                  walk=RF.model.results[,'walk'],
+                                  rest=rowSums(RF.model.results[,c('sit','stand')]),
+                                  fly=rowSums(RF.model.results[,c('fly-flap','fly-soar')]),
+                                  beg=RF.model.results[,'beg']
+                                  )
+  
+  RF.model.results.pooled = rbind(forage=colSums(RF.model.results.pooled.cols[c('for-search','for-handle','for-intake'),]), 
+                                  walk=RF.model.results.pooled.cols['walk',],
+                                  rest=colSums(RF.model.results.pooled.cols[c('sit','stand'),]),
+                                  fly=colSums(RF.model.results.pooled.cols[c('fly-flap','fly-soar'),]),
+                                  beg=RF.model.results.pooled.cols['beg',]
+                                  )
+
+  cM <- confusionMatrix(as.table(RF.model.results.pooled))
+  sensitivity <- cM$byClass[,"Sensitivity"] # 
+  specificity <- cM$byClass[,"Specificity"] # or recall
+  precision <- cM$byClass[,"Pos Pred Value"] # or precision
+  accuracy.overall <- sum(diag(RF.model.results))/sum(RF.model.results) # this is the "global" accuracy = (TP+TN)/(TP+FP+FN+TN)
+  list(sensitivity, specificity, precision, accuracy.overall, cM)
+}
+### End of classification performance calculation of pooled behaviours
 
 ### Functions to calculate means and quantiles on matrices and arrays
 quantile.0.025 <- function(x) quantile(na.omit(x), 0.025)
@@ -423,6 +461,26 @@ retrieve.flight.information <- function(data) {
   migratory.flights
 }
 
+# make a neat table for manuscript from dredge output
+make.table.from.dredge.output <- function(dredge_output) {
+  table.output <- as.data.frame(dredge_output)
+  for (i in 1:dim(table.output)[1]) {
+    expl.vars = table.output[i,2:(which(names(table.output)=='df')-1)]
+    expl.vars = names(expl.vars)[!is.na(expl.vars)]
+    model.formula = paste(expl.vars,collapse=" + ")
+    table.output$model.name[i] <- model.formula
+  }
+  table.output$'-2logL' <- table.output$logLik * -2
+  table.output$'d-2logL' <- table.output$'-2logL' - min(table.output$'-2logL')
+  table.output <- table.output[,c('model.name','df','d-2logL','delta','weight')]
+  names(table.output)[c(2,4,5)] <- c('K','dAICc','Akaike.weight')
+  table.output[,3:5] <- format(round(table.output[,3:5],2), trim=T)
+  table.output
+}
+
+round_to_nearest <- function(x, multiple) {
+  round(x / multiple) * multiple
+}
 
 
 
@@ -629,21 +687,3 @@ plot.nest.attendance <- function(df, breeding.phase="incubation", add.tide = T) 
   mtext(paste(sex, unique(df$birdID), 'at nest during', breeding.phase, sep=' '), 3,1, outer=T)
   axis(1,at=60*(0:24),labels=0:24)
 }
-
-# make a neat table for manuscript from dredge output
-make.table.from.dredge.output <- function(dredge_output) {
-  table.output <- as.data.frame(dredge_output)
-  for (i in 1:dim(table.output)[1]) {
-    expl.vars = table.output[i,2:(which(names(table.output)=='df')-1)]
-    expl.vars = names(expl.vars)[!is.na(expl.vars)]
-    model.formula = paste(expl.vars,collapse=" + ")
-    table.output$model.name[i] <- model.formula
-  }
-  table.output$'-2logL' <- table.output$logLik * -2
-  table.output$'d-2logL' <- table.output$'-2logL' - min(table.output$'-2logL')
-  table.output <- table.output[,c('model.name','df','d-2logL','delta','weight')]
-  names(table.output)[c(2,4,5)] <- c('K','dAICc','Akaike.weight')
-  table.output[,3:5] <- format(round(table.output[,3:5],2), trim=T)
-  table.output
-}
-

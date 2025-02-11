@@ -1,6 +1,4 @@
 load("data/processed/acc.data.from.movebank.0327.RData")
-#load("D:/Tamar - Backup 2024-03-18/Analyses/22. Post-fledging parental care in spoonbills/postfledging_care/data/processed/acc.data.from.movebank.0327.RData")
-load("data/processed/gps.data.from.movebank.0327.RData")
 gps.data <- from.list.to.df(gps.data.list)
 # keep relevant columns from gps data:
 gps.data <- gps.data[,c('individual.local.identifier','tag.local.identifier','timestamp','location.lat','location.long','height.above.msl','ground.speed')]
@@ -74,5 +72,3 @@ for (i in 1:length(acc.data.list)) {
 lapply(gps.behav.data.list, function(x) print(dim(x)[1]))
 
 keep(gps.behav.data.list, parent_offspring_data, parents, chicks, gps.data, refdata_adults, refdata_juvs, sure=T)
-
-save.image("data/processed/gps.behav.data.0327.RData")
