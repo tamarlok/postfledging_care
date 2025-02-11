@@ -1,0 +1,9 @@
+"","effect","group","term","estimate","std.error"
+"1","fixed",NA,"(Intercept)",3.22106282392389,0.563450239868716
+"2","fixed",NA,"sex.parentm",0.243865009639919,0.0651460782295222
+"3","fixed",NA,"sex.chickm",-0.67053111146954,0.369020503737286
+"4","fixed",NA,"z.age",2.55527722756235,0.500504352267739
+"5","ran_pars","birdID.chick","sd__(Intercept)",1.88828357687083,NA
+"6","ran_pars","birdID.chick","cor__(Intercept).z.age",0.939214868589947,NA
+"7","ran_pars","birdID.chick","sd__z.age",1.7838284888088,NA
+"8","ran_pars","Residual","sd__Observation",1.61274238211828,NA
