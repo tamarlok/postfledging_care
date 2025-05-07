@@ -209,25 +209,25 @@ write.csv(TableS6d, paste("output/TableS7d - Distance to nest during contact 50m
 # (1) TOTAL AMOUNT OF CONTACT
 m.contact.chkprntagernd <- glmer(contact~sex.parent+sex.chick+z.age+yearf+(z.age|chick.parent), data=chick.parent.data.contact.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))) 
 model.sel.contact.chkprntagernd <- dredge(m.contact.chkprntagernd, fixed='yearf')
-TableS5a.chkprntagernd = make.table.from.dredge.output(model.sel.contact.chkprntagernd)
-write.csv(TableS5a.chkprntagernd, "output/TableS8a - chkprntagernd - Proportion of overall contact.csv")
+TableS8a.chkprntagernd = make.table.from.dredge.output(model.sel.contact.chkprntagernd)
+write.csv(TableS8a.chkprntagernd, "output/TableS8a - chkprntagernd - Proportion of overall contact.csv")
 
 # (2) BEGGING CONTACT 
 m.begging.chkprntagernd <- glmer(contact.begging~sex.parent+sex.chick+z.age+yearf+(z.age|chick.parent), data=chick.parent.data.behav.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))) # convergence issues
 modsel.begging.chkprntagernd <- dredge(m.begging.chkprntagernd, fixed='yearf') # three models with convergence issues, but not the full model. Perhaps models where z.age is not a fixed effect while a random slope is included. 
-TableS5b.chkprntagernd = make.table.from.dredge.output(modsel.begging.chkprntagernd)
-write.csv(TableS5b.chkprntagernd, "output/TableS8b - chkprntagernd - Proportion of begging contact.csv")
+TableS8b.chkprntagernd = make.table.from.dredge.output(modsel.begging.chkprntagernd)
+write.csv(TableS8b.chkprntagernd, "output/TableS8b - chkprntagernd - Proportion of begging contact.csv")
 
 # (3) FORAGING CONTACT
 m.foraging.chkprntagernd <- glmer(contact.foraging~sex.parent+sex.chick+z.age+yearf+(z.age|chick.parent), data=chick.parent.data.behav.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 modsel.foraging.chkprntagernd <- dredge(m.foraging.chkprntagernd, fixed='yearf')
-TableS5c.chkprntagernd = make.table.from.dredge.output(modsel.foraging.chkprntagernd)
-write.csv(TableS5c.chkprntagernd, "output/TableS8c - chkprntagernd - Proportion of foraging contact.csv")
+TableS8c.chkprntagernd = make.table.from.dredge.output(modsel.foraging.chkprntagernd)
+write.csv(TableS8c.chkprntagernd, "output/TableS8c - chkprntagernd - Proportion of foraging contact.csv")
 
 # (4) DISTANCE TO NEST DURING CONTACT
 m.dist.nest.chkprntagernd = glmer(dist.nest.chick.km~sex.parent+sex.chick+z.age+(z.age|chick.parent), chick.data.actual.contact, na.action='na.fail', family=Gamma(link='log'))
 modsel.dist.nest.chkprntagernd = dredge(m.dist.nest.chkprntagernd)
-TableS5d.chkprntagernd = make.table.from.dredge.output(modsel.dist.nest.chkprntagernd)
-write.csv(TableS5d.chkprntagernd, "output/TableS8d - chkprntagernd - Distance to nest during contact.csv")
+TableS8d.chkprntagernd = make.table.from.dredge.output(modsel.dist.nest.chkprntagernd)
+write.csv(TableS8d.chkprntagernd, "output/TableS8d - chkprntagernd - Distance to nest during contact.csv")
 
 
