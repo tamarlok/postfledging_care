@@ -1,7 +1,8 @@
-#rm(list=ls())
+rm(list=ls())
+source('functions.r')
 # load the ringing data from the database:
-con<-odbcConnectAccess2007("C:/Users/Tamar Lok/Documents/LepelaarDB/LepelaarDB_linked.accdb") # Using MASTER DB version 
-ringings = sqlFetch(con, "Qy_CaptureOverview_all")
+con<-odbcConnectAccess2007("C:/Users/Tamar Lok/Documents/LepelaarDB/LepelaarDB_BACKUP_2024-12-19.accdb") 
+ringings = sqlFetch(con, "Qy_CaptureOverview")
 sightings_raw = sqlFetch(con, "tbl Sightings")
 sightings_with_info = sqlFetch(con, "Qy_SightingOverview_without_capture_info") # sightings with info about the sightings, not about the captures of the birds involved
 # odbcClose(con)
@@ -47,6 +48,16 @@ ringings.first = merge(ringings.first, unique(ringings_sel[,c('BirdID','ColourCo
 names(ringings.first)[c(2,5:7,9)]=c('RingDate','RingLocation','RingLatitude','RingLongitude','P8')
 head(ringings.first)
 BirdID.ColourCode = unique(ringings.first[,c('BirdID','ColourCode')]) # first registered colourcode per bird. 
+
+# link ringing data to sighting data to be able to filter the total number of observations during autumn migration of juveniles (i.e. south of The Netherlands between July and December at age=0)
+sightings_with_ringing_info = merge(sightings_with_info, ringings.first[,c('BirdID','RingDate','RingLocation','Ageclass')])
+table(sightings_with_ringing_info$RingLocation)
+sightings_juvs_autumn_migration = sightings_with_ringing_info[sightings_with_ringing_info$Ageclass=='pullus' & 
+                                                                sightings_with_ringing_info$Year - year(sightings_with_ringing_info$RingDate)==0 & month(sightings_with_ringing_info$Date)%in%7:12 & sightings_with_ringing_info$Latitude<52 & sightings_with_ringing_info$Country!='The Netherlands' & sightings_with_ringing_info$Year>=1994,]
+# 10,801 observations of juvenile birds during autumn migration of
+length(unique(sightings_juvs_autumn_migration$BirdID))
+min(na.omit(sightings_juvs_autumn_migration$Date))
+max(na.omit(sightings_juvs_autumn_migration$Date))
 
 # filter observation data on sex information: 
 table(sightings_with_info$SexObs)
@@ -167,7 +178,7 @@ feeding.obs.pf$schier = ifelse(feeding.obs.pf$Location=='Schiermonnikoog, Ooster
 
 # statistical analysis of the number and distance from the colony of observed feedings.
 # analyse number of feedings with poisson regression:
-# to have high enough sample sizes, pool chick ages per 10 days:
+# to have large enough sample sizes, pool chick ages per 10 days:
 # first test the effect of chick age while randomly selecting one observation per chick:
 feeding.obs.pf$rnd <- sample((1:1000000)/1000000,dim(feeding.obs.pf)[1])
 feeding.obs.pf$freq=1
@@ -181,6 +192,7 @@ load("data/processed/feeding.obs.pf.rnd.0116.RData")
 dim(feeding.obs.pf) # 184 observations on
 chicks = unique(feeding.obs.pf[,c('Chick.code.1','SexChickSel')]) # 127 different chicks; 
 table(chicks$SexChickSel) # 40 females, 46 males and 41 chicks with unknown sex
+table(feeding.obs.pf$Parent.code)
 parents = unique(feeding.obs.pf[,c('Parent.code','SexParentSel')]) # 78 different parents (where unringed parents are counted as 1 parent, so 77 colour-ringed parents)
 table(parents$SexParentSel) # 23 females, 34 males and 17 with unknown sex (16 if the unringed birds are removed)
 
@@ -190,6 +202,13 @@ rnd.max.chick = aggregate(rnd~Chick.code.1, feeding.obs.pf, max)
 feeding.obs.pf.chick.uni = merge(feeding.obs.pf, rnd.max.chick) # 127 unique observations of known-age chicks. 
 nfeeds.age10 = aggregate(freq~ChickAge10, feeding.obs.pf.chick.uni, sum)
 m.nfeeds.age10 = glm(freq~ChickAge10, data=nfeeds.age10, family="poisson")
+# Calculate overdispersion statistic
+resid_dev <- sum(residuals(m.nfeeds.age10, type = "deviance")^2)
+df_resid <- df.residual(m.nfeeds.age10)
+dispersion_ratio <- resid_dev / df_resid
+dispersion_ratio # underdispersion... no problem!
+plot(fitted(m.nfeeds.age10)~residuals(m.nfeeds.age10))
+
 summary(m.nfeeds.age10) # highly significant effect of chick age.
 # effect of chick sex (while accounting for effect chick age):
 # selecting only obs where chick sex is known
@@ -213,7 +232,7 @@ table(feeding.obs.parentsex.known$site)
 nfeeds.sexp.age10 = aggregate(freq~ChickAge10+SexParentSel, feeding.obs.parentsex.known, sum)
 m.nfeeds.sexp.age10 = glm(freq~ChickAge10+SexParentSel, data=nfeeds.sexp.age10, family="poisson")
 summary(m.nfeeds.sexp.age10) # effect of parent sex is N.S.
-# when pooling all chick ageclasses:
+# when pooling all chick age classes:
 nfeeds.sexp = aggregate(freq~SexParentSel, feeding.obs.parentsex.known, sum)
 m.nfeeds.sexp = glm(freq~SexParentSel, data=nfeeds.sexp, family="poisson")
 summary(m.nfeeds.sexp) # the sex effect is still not significant.
@@ -221,85 +240,37 @@ summary(m.nfeeds.sexp) # the sex effect is still not significant.
 # Analysis of distance from the colony of feedings
 feeding.obs.pf.chick.uni.naomit = na.omit(feeding.obs.pf.chick.uni[,c('ChickAge','SexParentSel','distance.from.colony')])
 m.feeddist.age.sexp = lm(distance.from.colony~ChickAge+SexParentSel, feeding.obs.pf.chick.uni.naomit, na.action='na.fail') # this also includes the parents with sex='u'
+# test model assumptions:
+# 1. Linearity & homoscedasticity
+plot(residuals(m.feeddist.age.sexp)~fitted(m.feeddist.age.sexp))
+curve(0*x, lty='dashed', add=T)
+ncvTest(m.feeddist.age.sexp)
+# 2. Normality of residuals
+plot(m.feeddist.age.sexp, which=2) # apart from 5 outliers, residuals are pretty normally distributed.
+feeding.obs.pf.chick.uni.no.outliers = feeding.obs.pf.chick.uni.naomit[which(!rownames(feeding.obs.pf.chick.uni.naomit)%in%c('20','94','95','99','127')),]
+m.feeddist.age.sexp.no.outliers = lm(distance.from.colony~ChickAge+SexParentSel, feeding.obs.pf.chick.uni.no.outliers, na.action='na.fail') # this also 
+plot(m.feeddist.age.sexp.no.outliers, which=2) # apart from 5 outliers, residuals are pretty normally distributed.
+shapiro.test(residuals(m.feeddist.age.sexp.no.outliers))
+
+# does taking the log of distance.from.colony solve the issue?
+feeding.obs.pf.chick.uni.nozero = feeding.obs.pf.chick.uni.naomit
+feeding.obs.pf.chick.uni.nozero$distance.from.colony[feeding.obs.pf.chick.uni.nozero$distance.from.colony==0]=0.01
+feeding.obs.pf.chick.uni.nozero$log.distance.from.colony = log(feeding.obs.pf.chick.uni.nozero$distance.from.colony)
+m.feeddist.log.age.sexp = lm(log.distance.from.colony~ChickAge+SexParentSel, feeding.obs.pf.chick.uni.nozero, na.action='na.fail')
+plot(m.feeddist.log.age.sexp, which=1)
+plot(m.feeddist.log.age.sexp, which=2)
+# this doesn't really improve the plots... 
+
+# therefore, we continue with 'normal' linear models:
 dredge(m.feeddist.age.sexp)
-summary(m.feeddist.age)$r.squared
-anova(m.feeddist.age)
 # when only using data with known sexes:
 feeding.obs.pf.chick.uni.knownsex = feeding.obs.pf.chick.uni.naomit[feeding.obs.pf.chick.uni.naomit$SexParentSel!='u',]
 m.feeddist.age.sexp = lm(distance.from.colony~ChickAge+SexParentSel, feeding.obs.pf.chick.uni.knownsex, na.action='na.fail') # this also includes the parents with sex='u'
 dredge(m.feeddist.age.sexp) # still no support for a sex effect.
-m.feeddist.parsim = lm(distance.from.colony~ChickAge, feeding.obs.pf.chick.uni.knownsex, na.action='na.fail') # this also includes the parents with sex='u'
+m.feeddist.parsim = lm(distance.from.colony~ChickAge, feeding.obs.pf.chick.uni.naomit, na.action='na.fail')
+summary(m.feeddist.parsim)$r.squared
+anova(m.feeddist.parsim)
 
-# I thought, I should also use the Gamma distribution for the observation data, but this gives an error
-feeding.obs.pf.chick.uni.nozero = feeding.obs.pf.chick.uni.naomit
-feeding.obs.pf.chick.uni.nozero$distance.from.colony[feeding.obs.pf.chick.uni.nozero$distance.from.colony==0]=0.01
-glm.feeddist.gamma = glm(distance.from.colony~ChickAge, feeding.obs.pf.chick.uni.nozero, na.action='na.fail', family=Gamma(link='log'))
-# instead, I could use log-transformed values:
-feeding.obs.pf.chick.uni.nozero$log.distance.from.colony = log(feeding.obs.pf.chick.uni.nozero$distance.from.colony)
-m.feeddistlog.age.sexp = lm(log.distance.from.colony~ChickAge+SexParentSel, feeding.obs.pf.chick.uni.nozero, na.action='na.fail')
-dredge(m.feeddistlog.age.sexp)
-m.feeddistlog.parsim = lm(log.distance.from.colony~ChickAge, feeding.obs.pf.chick.uni.nozero, na.action='na.fail')
-
-# what if we fit a logistic curve?
-# we could compare this to a constant model
-
-# First, manually check parameter values that give a reasonable fit:
-plot(distance.from.colony~ChickAge, feeding.obs.pf.chick.uni, xlab="", ylab="Distance from colony (km)", ylim=c(0,43), las=1)
-k = 0.1 # growth rate
-x0 = 80 # midpoint (where the curve transitions)
-L = 35 # maximum value (asymptote)
-curve(L / (1 + exp(-k * (x - x0))), add=T)
-
-# Logistic model
-dist.age.nls <- nls(distance.from.colony ~ L / (1 + exp(-k * (ChickAge - x0))), 
-                      start = list(L = 35, k = 0.1, x0 = 80), data=feeding.obs.pf.chick.uni)
-summary(dist.age.nls)
-# compare with predicted values:
-points(feeding.obs.pf.chick.uni$ChickAge, predict(dist.age.nls), col='blue', cex=0.5)
-# null model:
-dist.age.lm = lm(distance.from.colony ~ ChickAge, data=feeding.obs.pf.chick.uni)
-dist.c.lm = lm(distance.from.colony ~ 1, data=feeding.obs.pf.chick.uni)
-anova(dist.age.nls, dist.age.lm) # logistic model fits significantly better than the linear model. 
-
-# Assess model fit and assumptions for nls model:
-plot(fitted(dist.age.nls), residuals(dist.age.nls), 
-     xlab = "Fitted values", ylab = "Residuals", 
-     main = "Residuals vs Fitted")
-abline(h = 0, col = "red")
-# some heteroscedasticity, variance increases with fitted value
-# Histogram of residuals
-hist(residuals(dist.age.nls), breaks = 20, main = "Histogram of Residuals") # well, lot's of zeros, but apart from that, quite normally distributed.
-# Q-Q Plot
-qqnorm(residuals(dist.age.nls))
-qqline(residuals(dist.age.nls), col = "red")
-
-# Compute pseudo-R² (R² cannot be calculated for nls object) 
-SSE <- sum(residuals(dist.age.nls)^2)  # Sum of squared errors
-SST <- sum((y - mean(y))^2)        # Total sum of squares
-R2 <- 1 - SSE / SST
-R2 # I'd say pretty good R2...
-# assess CI of model parameters to assess their uncertainty:
-confint(dist.age.nls) # why does k give an NA for 97.5%?
-
-# Way to account for heteroskedasticity in nls model
-# Step 2: Compute residuals and fitted values
-residuals_initial <- residuals(initial_model)
-fitted_values <- fitted(initial_model)
-
-# Step 3: Model variance (e.g., residual variance as a function of fitted values)
-variance_model <- lm(log(residuals_initial^2) ~ log(fitted_values))
-
-# Step 4: Define weights (inverse variance)
-weights <- 1 / exp(predict(variance_model, newdata = data.frame(fitted_values = fitted_values)))
-
-# Step 5: Weighted nls
-weighted_model <- nls(y ~ L / (1 + exp(-k * (x - x0))), 
-                      start = list(L = max(y), k = 1, x0 = median(x)),
-                      weights = weights)
-
-# Summary
-summary(weighted_model)
-
-# Alternative: use log-transformed values
-
-
+# Perhaps a logistic curve gives a better fit? 
+logistic_model <- nls(distance.from.colony~ L / (1 + exp(-k * (ChickAge - x0))), feeding.obs.pf.chick.uni.naomit, start = list(L = 30, k = 0.1, x0 = 80))
+AIC(logistic_model, m.feeddist.parsim) # not really

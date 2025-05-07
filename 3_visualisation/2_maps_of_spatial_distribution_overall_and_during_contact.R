@@ -1,5 +1,6 @@
-# register_google(key="AIzaSyBYq_g9r-ewGGPUozcATuscTMIJ0DkNjYc") # free usage until 21/April/2025 (or when 288 euros of 'free credit' are all spent)
-#register_stadiamaps(key="fc371c8d-3c09-4534-b284-f273cb7781d7")
+## load the API keys required for using Google and Stadia Maps (with the package ggmap):
+source('C:/Users/Tamar Lok/Documents/R/Load_API_keys_for_using_maps.R')
+
 # map the overall distributions of parents and their chicks during post-fledging.
 # overlay these maps with the distributions of contact, potentially distinguishing overall, begging and foraging contact.
 

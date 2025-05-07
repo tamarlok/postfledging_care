@@ -1,31 +1,32 @@
-source("functions.R")
-parents <- unique(parent_offspring_data$parentID)
-chicks <- unique(parent_offspring_data$chickID)
-
 gps.data <- from.list.to.df(gps.data.list)
-
 # keep relevant columns from gps data:
 gps.data <- gps.data[,c('individual.local.identifier','tag.local.identifier','timestamp','location.lat','location.long','height.above.msl','ground.speed')]
-names(gps.data) = c('birdID','tagID','datetime','latitude','longitude','altitude','ground.speed')
-table(gps.data$birdID)
+names(gps.data) = c('birdID','tagID','date_time','latitude','longitude','altitude','ground.speed')
+rm(gps.data.list)
+
+parents <- unique(parent_offspring_data$parentID)
+chicks <- unique(parent_offspring_data$chickID)
 
 gps_refdata_juvs = refdata_juvs[refdata_juvs$sensor_type_id==653,]
 gps_refdata_adults = refdata_adults[refdata_adults$sensor_type_id==653,]
 
-gps_refdata_all <- na.omit(rbind(gps_refdata_juvs[,c('animal_local_identifier','tag_local_identifier','animal_nick_name','animal_sex','deploy_on_timestamp','deploy_off_timestamp','animal_life_stage')], gps_refdata_adults[,c('animal_local_identifier','tag_local_identifier','animal_nick_name','animal_sex','deploy_on_timestamp','deploy_off_timestamp','animal_life_stage')]))
+gps_refdata_all <- na.omit(rbind(gps_refdata_juvs[,c('animal_local_identifier','tag_local_identifier','animal_nick_name','animal_sex','deploy_on_timestamp','deploy_off_timestamp','animal_life_stage','animal_mortality_date')], gps_refdata_adults[,c('animal_local_identifier','tag_local_identifier','animal_nick_name','animal_sex','deploy_on_timestamp','deploy_off_timestamp','animal_life_stage','animal_mortality_date')]))
 
-names(gps_refdata_all) = c('birdID','tagID','colourcode','sex','start_deployment','end_deployment','ageclass')
+names(gps_refdata_all) = c('birdID','tagID','colourcode','sex','start_deployment','end_deployment','ageclass','mortality_date')
 gps_refdata_all$start_deployment <- ymd_hms(gps_refdata_all$start_deployment)
 gps_refdata_all$end_deployment <- ymd_hms(gps_refdata_all$end_deployment)
+gps_refdata_all$mortality_date <- ymd(gps_refdata_all$mortality_date)
+gps_refdata_all$mortality_date[is.na(gps_refdata_all$mortality_date)] <- ymd('2099-12-31')
 
 # link gps reference data to gps data:
 gps.data.ref <- merge(gps.data, gps_refdata_all, by=c('birdID','tagID'), all.x=T)
 
-# remove data of the date of tracking:
-gps.data.ref <- gps.data.ref[date(gps.data.ref$datetime)>gps.data.ref$start_deployment,]
+# remove data of the date of tracking and data after the mortality date (of either chick or parent)
+gps.data.ref <- gps.data.ref[date(gps.data.ref$date_time)>gps.data.ref$start_deployment & 
+                               date(gps.data.ref$date_time)<=gps.data.ref$mortality_date,]
 
 # change time zone of datetime so that yday is determined on local time (CEST) instead of UTC.
-gps.data.ref$datetime_CEST <- with_tz(gps.data.ref$datetime, tz="Europe/Amsterdam")
+gps.data.ref$datetime_CEST <- with_tz(gps.data.ref$date_time, tz="Europe/Amsterdam")
 gps.data.ref$yday_CEST <- yday(gps.data.ref$datetime_CEST)
 gps.data.ref$year <- year(gps.data.ref$datetime_CEST)
 
@@ -37,7 +38,7 @@ gps.data.10min <- gps.data.ref %>%
   group_by(time_interval, year, birdID, yday_CEST) %>%
   slice(1)
 
-# this still includes all GPS-tagged birds, from 2012-2023. And also lots of different GPS intervals (from 10 minutes to 1 hour, perhaps sometimes even longer intervals...) 
+# this still includes the data of the parents and chicks that are in parent_offspring_data from 2012-2023. And also lots of different GPS intervals (from 10 minutes to 1 hour, perhaps sometimes even longer intervals...) 
 
 # determine autumn migration departure dates per bird per year:
 # migration is defined as the first day during which the bird travelled >50 km southward of the colony. 
@@ -66,7 +67,6 @@ for (bird in birds) {
 
 departure.dates$datetime <- as.POSIXct(departure.dates$datetime, tz="Europe/Amsterdam", origin = "1970-01-01")
 names(departure.dates)[3]='datetime_departure'
-write.table(departure.dates, 'clipboard', sep='\t')
 
 # link departure info to parent_offspring_data:
 departure.dates.chick.parent = merge(parent_offspring_data[,1:3], departure.dates, by.x=c('parentID','year'), by.y=c('birdID','year'), all.x=T)
@@ -87,63 +87,66 @@ i=0
 for (chick in chicks) {
   print(chick)
   parent = parent_offspring_data$parentID[parent_offspring_data$chickID==chick]
-  chick_data = gps.data.10min[gps.data.10min$birdID==chick,]
+  chick_data = gps.data.10min[gps.data.10min$birdID==chick & year(gps.data.10min$datetime_CEST)==year(gps.data.10min$start_deployment),]
+  year = year(chick_data$datetime_CEST)[1]
   # if there is only one parent GPS-tracked, then run the following line to retrieve parent data:
   if (length(parent)==1) {
     i = i+1
     print(parent)
-    parent_data = gps.data.10min[gps.data.10min$birdID==parent,]
+    parent_data = gps.data.10min[gps.data.10min$birdID==parent & year(gps.data.10min$datetime_CEST)==year,]
+    if (dim(parent_data)[1]>0) {
+      chick_parent_data <- link.chick.parent.data(chick_data, parent_data)
+      chick.parent.data.list[[i]] = chick_parent_data
+    }
     # determine nest location based on parent_data in the 8 weeks before the first chick location:
     nest.location = determine.nest.location(parent_data)
     nest.data[i,] = nest.location
-    chick_parent_data <- link.chick.parent.data(chick_data, parent_data)
-    chick.parent.data.list[[i]] = chick_parent_data
-    print(nest.data)
+    print(nest.location)
     }
   if (length(parent)==2) {
     # link chick data to parent 1 data
     i = i+1
     print(parent[1])
-    parent1_data = gps.data.10min[gps.data.10min$birdID==parent[1],]
+    parent1_data = gps.data.10min[gps.data.10min$birdID==parent[1] & year(gps.data.10min$datetime_CEST)==year,]
     parent1_data$sex.parent = refdata_adults$animal_sex[refdata_adults$animal_local_identifier==parent[1]][1]
-    chick_parent1_data <- link.chick.parent.data(chick_data, parent1_data)
-    chick.parent.data.list[[i]] = chick_parent1_data
+    if (dim(parent1_data)[1]>0) {
+      chick_parent1_data <- link.chick.parent.data(chick_data, parent1_data)
+      chick.parent.data.list[[i]] = chick_parent1_data
+      }
     # link chick data to parent 2 data
     i = i+1
     print(parent[2])
-    parent2_data = gps.data.10min[gps.data.10min$birdID==parent[2],]
+    parent2_data = gps.data.10min[gps.data.10min$birdID==parent[2] & year(gps.data.10min$datetime_CEST)==year,]
     parent2_data$sex.parent = refdata_adults$animal_sex[refdata_adults$animal_local_identifier==parent[2]][1]
-    chick_parent2_data <- link.chick.parent.data(chick_data, parent2_data)
+    if (dim(parent2_data)[1]>0) {
+      chick_parent2_data <- link.chick.parent.data(chick_data, parent2_data)
+      chick.parent.data.list[[i]] = chick_parent2_data
+      }
     # determine nest location based on combined data of the two parents:
     parents_data = rbind(parent1_data, parent2_data)
     nest.location = determine.nest.location(parents_data)
     nest.data[i-1,] = nest.location
     nest.data[i,] = nest.location
-    chick.parent.data.list[[i]] = chick_parent2_data
-    print(nest.data)
-  }
+    print(nest.location)
+    }
 }
 
 parent_offspring_nest_data <- cbind(parent_offspring_data, nest.data)
 
 lapply(chick.parent.data.list, function(x) print(c(x$birdID.chick[1], x$birdID.parent[1]))) 
 
-#save.image("data/processed/chick.parent.data.1008.RData")
+#save.image("data/processed/chick.parent.data.0416.RData")
+#load("data/processed/chick.parent.data.0416.RData")
 
 chick.parent.data <- from.list.to.df(chick.parent.data.list)
 
-rm(chick.parent.data.list, parent_data, parent1_data, parent2_data, parents_data, gps.data, gps.data.10min, gps.data.ref)
-
-head(chick.parent.data)
-table(chick.parent.data$birdID.chick[is.na(chick.parent.data$distance)], chick.parent.data$birdID.parent[is.na(chick.parent.data$distance)])
-# distance=NA occurs when there are data of the chick but not of the parent. 
+rm(chick.parent.data.list, parent_data, parent1_data, parent2_data, parents_data, gps.data.ref)
 
 # add column with age of chick:
 chick.biometrics <- read.csv('data/raw/bird.data.juvs.csv')
 chick.biometrics$start_deployment <- dmy(chick.biometrics$start_deployment)
 chick.biometrics$age_deployment <- round(-log(-log(chick.biometrics$P8/247))/0.095 + 19.3,0)
 chick.parent.data <- merge(chick.parent.data, chick.biometrics[,c('birdID','start_deployment','age_deployment','birthyear')], by.x='birdID.chick', by.y='birdID')
-head(chick.parent.data)
 
 # calculate age: 
 chick.parent.data$age.chick <- yday(chick.parent.data$datetime.chick)-yday(chick.parent.data$start_deployment)+chick.parent.data$age_deployment
@@ -151,7 +154,6 @@ chick.parent.data <- chick.parent.data[year(chick.parent.data$datetime.chick)==c
 chick.parent.data$chick.parent <- paste(chick.parent.data$birdID.chick, chick.parent.data$birdID.parent, sep='-') 
 chick.parent.data$sex.chick.parent <- paste(chick.parent.data$sex.chick, chick.parent.data$sex.parent, sep='-') 
 chick.parent.data$yday <- yday(chick.parent.data$datetime.chick)
-table(chick.parent.data$yday, chick.parent.data$chick.parent)
 
 # calculate the distance of the chick from its colony/nest:
 chick.nest = unique(parent_offspring_nest_data[,c('chickID','latitude','longitude')])
@@ -167,45 +169,49 @@ chick.parent.data$timediff <- difftime(chick.parent.data$datetime.chick, chick.p
 chick.parent.data$timediff.abs <- abs(chick.parent.data$timediff)
 data.much.timediff = chick.parent.data[chick.parent.data$timediff.abs>1000,] # check which data had more than 10 minutes time difference
 data.much.timediff$date <- date(data.much.timediff$datetime.chick)
-unique(data.much.timediff[,c('date','birdID.chick','birdID.parent','datetime.chick','datetime.parent')]) # the same datetime of the parent can be linked multiple times to different datetimes of the chick. 
+unique(data.much.timediff[,c('date','birdID.chick','birdID.parent','datetime.chick','datetime.parent','timediff.abs')]) # the same datetime of the parent can be linked multiple times to different datetimes of the chick. 
 
 # link departure data to the chick parent data
-chick.parent.data.sel = merge(chick.parent.data, departure.dates.chick.parent[,c('chickID','parentID','departure.datetime.chick','interval.chick','departure.datetime.parent','interval.parent')], by.x=c('birdID.chick','birdID.parent'), by.y=c('chickID','parentID'), all.x=T)
+chick.parent.data.departure = merge(chick.parent.data, departure.dates.chick.parent[,c('chickID','parentID','departure.datetime.chick','interval.chick','departure.datetime.parent','interval.parent')], by.x=c('birdID.chick','birdID.parent'), by.y=c('chickID','parentID'), all.x=T)
 
-# only select data where the time difference between chick and parent is less than 10 minutes, or selecting the period when the parent already departed while the chick did not (using the departure.dates.chick.parent information). The second criterion adds data when the parent never downloaded its data after its departure, while it is certain that the chick was not in contact with the parent during the period that the parent had already departed but the chick had not. 
-# As it turns out that parents and chicks always left independently of their parents, we focus on the analysis where the chick is still at the breeding grounds (i.e. data prior to chick departure)
-# Data points with more than 10 minutes difference should not be included in the analysis, as it is uncertain whether parent and chick were in contact.
-chick.parent.data.sel <- chick.parent.data.sel[which(chick.parent.data.sel$timediff.abs < 600 | (chick.parent.data.sel$datetime.chick < date(chick.parent.data.sel$departure.datetime.parent) & chick.parent.data.sel$datetime.chick < date(chick.parent.data.sel$departure.datetime.chick))),]
+# select data after departure of the chick, to see what is the minimum distance to the closest (in time) timestamp of the parent:
+chick.parent.data.after.departure = chick.parent.data.departure[
+  chick.parent.data.departure$datetime.chick > chick.parent.data.departure$departure.datetime.chick &
+  chick.parent.data.departure$datetime.parent > chick.parent.data.departure$departure.datetime.parent,]
+
+table(round(chick.parent.data.after.departure$distance/1000,1))[1:10] # only 4 cases where distance < 10 km. 
+# all these 4 cases involved 6295-6288 on or before 30 September 2016. Among the other chick-parent pairs, the distance was always > 40 km: 
+chick.parent.data.after.departure[which(chick.parent.data.after.departure$distance<50000),c('chick.parent','datetime.chick','timediff.abs','distance')]
+
+# calculate contact moments:
+chick.parent.data.departure$contact <- ifelse(chick.parent.data.departure$distance<10,1,0)
+chick.parent.data.departure$freq <- 1
+table(chick.parent.data.departure$chick.parent[chick.parent.data.departure$contact==1], chick.parent.data.departure$age.chick[chick.parent.data.departure$contact==1])
+# last contact was on 142 d old, but this was the short contact between 6295 and 6288 in the Dutch Delta after departure.
+# the last contact at the breeding grounds was at 136 d (also of 6295-6288)
+
+# For analysis, only select data where the time difference between chick and parent is less than 10 minutes, OR selecting the period when the parent already departed while the chick did not (using the departure.dates.chick.parent information) or the chick had already departed while the parent had not, as - despite not having joined data with less than 10 minutes difference - it is certain that the chick was not in contact with the parent during this period. 
+# As high resolution data of the chicks usually stops after the chick's departure, we remove the data after the chick's departure. 
+# Add a date in the far future for chicks that never departed:
+chick.parent.data.departure$departure.datetime.chick[is.na(chick.parent.data.departure$departure.datetime.chick)] = ymd('2099-12-31', tz='Europe/Amsterdam')
+chick.parent.data.sel <- chick.parent.data.departure[which(chick.parent.data.departure$datetime.chick < chick.parent.data.departure$departure.datetime.chick &
+                                                             (chick.parent.data.departure$timediff.abs < 600 | 
+                              chick.parent.data.departure$datetime.chick > chick.parent.data.departure$departure.datetime.parent)),]
+
+#chick.parent.data.sel <- chick.parent.data.departure[which(chick.parent.data.departure$timediff.abs < 600 | 
+#                                                                (chick.parent.data.departure$datetime.chick < chick.parent.data.departure$departure.datetime.chick &
+#                                                                   chick.parent.data.departure$datetime.chick > chick.parent.data.departure$departure.datetime.parent)),]
 
 chick.parent.data.sel$sex.chick.parent <- factor(chick.parent.data.sel$sex.chick.parent, levels=c("f-f","m-f","f-m","m-m"))
-# which years?
-table(year(chick.parent.data.sel$datetime.chick))
-# which chick-parent pairs were used?
-unique(chick.parent.data.sel[,c('chick.parent')])
+
+chick.parent.data.sel[chick.parent.data.sel$birdID.chick=='1607',]
 
 # number of GPS locations per yday per parent x chick pair:
 nlocs.pair.yday = table(chick.parent.data.sel$yday, chick.parent.data.sel$chick.parent)
-hist(nlocs.pair.yday[nlocs.pair.yday>100])
+hist(nlocs.pair.yday[nlocs.pair.yday])
 nlocs.pair.yday[nlocs.pair.yday>100]
-nlocs.pair.yday[nlocs.pair.yday>144] # how can there be more than 144 (6*24) points per yday?
 df.nlocs.pair.yday = as.data.frame(nlocs.pair.yday)
 names(df.nlocs.pair.yday) = c('yday','chick.parent','nlocs')
-df.nlocs.pair.yday[df.nlocs.pair.yday$nlocs>144,] # check the cases with more than 144 points
-check1 = chick.parent.data.sel[chick.parent.data.sel$yday==304 & chick.parent.data.sel$chick.parent=='6298.1-6118',]
-check1$datediff = 0
-check1$datediff[2:length(check1$datediff)] = check1$datetime.chick[2:length(check1$datediff)] - check1$datetime.chick[1:(length(check1$datediff)-1)]
-table(round(check1$datediff,1)) # lots of datediffs <10, so adding up over an entire day, this gives more than 144 locations.
-# only select data with at least 130 joint locations per day (this will kick out the migration part though where there is only GSM data for most chicks and some parents...)
-
-# in the cases where timediff.abs>600 while the parent had already departed but the chick did not (automatically the case from the above selection), distance is manually set to 1000000:
-chick.parent.data.sel$distance.corr <- chick.parent.data.sel$distance
-chick.parent.data.sel$distance.corr[chick.parent.data.sel$timediff.abs >= 600] = 10000000
-hist(as.numeric(chick.parent.data.sel$timediff)) # it occurs equally often that the datetime of the chick is later than of the parent and vice versa
-
-
-# calculate contact moments:
-chick.parent.data.sel$contact <- ifelse(chick.parent.data.sel$distance<10,1,0)
-chick.parent.data.sel$freq <- 1
 
 # data selection for analysis of contact data
 chick.parent.data.contact <- merge(chick.parent.data.sel, df.nlocs.pair.yday) 
@@ -214,6 +220,7 @@ chick.parent.data.contact <- chick.parent.data.contact[chick.parent.data.contact
 ydays.chick.parent.pair = unique(chick.parent.data.contact[,c('chick.parent','yday')])
 ydays.chick.parent.pair = as.data.frame(table(ydays.chick.parent.pair$chick.parent)) # only 2 complete days of data for 1607-6284.2.
 names(ydays.chick.parent.pair)=c('chick.parent','ndays')
+
 # only use data of chick-parent pairs with at least 10 days of nearly complete joint data.
 chick.parent.data.contact = merge(chick.parent.data.contact, ydays.chick.parent.pair)
 chick.parent.data.contact = chick.parent.data.contact[chick.parent.data.contact$ndays>10,]

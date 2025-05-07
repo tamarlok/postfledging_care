@@ -133,7 +133,6 @@ create.fixed.segments <- function(segment.length, data, sampling.freq=20, annota
   }
 }
 
-
 assign.behaviour.to.segments <- function(seg.df, acc) {
   # match most occurring behaviour during a segment with seg.df data frame:
   acc$freq <- 1
@@ -304,13 +303,12 @@ findClosestDatetime <- function(datetime, datetime_vec) {
 }
 
 determine.nest.location <- function(df) {
-  df <- na.omit(df[,c('latitude','longitude','datetime')])
-  df$datetime_CEST <- with_tz(df$datetime, tz="Europe/Amsterdam")
+  df <- na.omit(df[,c('latitude','longitude','datetime_CEST')])
   df$yday_CEST <- yday(df$datetime_CEST)
   df$lat_rnd=round(df$latitude, digit=5)
   df$lon_rnd=round(df$longitude, digit=6)
   df$duration=NA
-  df$duration[1:(dim(df)[1]-1)]=interval(df$datetime[1:(dim(df)[1]-1)], df$datetime[2:dim(df)[1]])/60 
+  df$duration[1:(dim(df)[1]-1)]=interval(df$datetime_CEST[1:(dim(df)[1]-1)], df$datetime_CEST[2:dim(df)[1]])/60 
   # duration in minutes
   # for nest determination, only select durations of <11, to exclude intervals longer than 10 minutes
   # determine the total time spent per rounded coordinate, selecting the position with the longest total time spent as (the potential) nest:
@@ -461,6 +459,20 @@ retrieve.flight.information <- function(data) {
   migratory.flights
 }
 
+dredge.parallel <- function(model, data, fixed = NULL, n.cores = NULL){
+  if (is.null(n.cores)) n_cores <- detectCores() - 1 else n_cores = n.cores
+  cl <- makeCluster(n_cores)
+  clusterExport(cl, varlist = c('model', 'data', 'fixed_term'), envir = environment())
+  clusterEvalQ(cl, {
+    library(lme4)
+    library(MuMIn)
+  })
+  options(na.action = "na.fail")  # dredge requires this
+  dredge_results <- dredge(model, fixed = fixed_term, cluster = cl)
+  stopCluster(cl)
+  dredge_results
+}
+
 # make a neat table for manuscript from dredge output
 make.table.from.dredge.output <- function(dredge_output) {
   table.output <- as.data.frame(dredge_output)
@@ -481,6 +493,33 @@ make.table.from.dredge.output <- function(dredge_output) {
 round_to_nearest <- function(x, multiple) {
   round(x / multiple) * multiple
 }
+
+calculate.Wilson.score.interval <- function(x) {
+  n <- length(x)
+  xsum <- sum(x)  # Sum of proportions represents "successes"
+  result <- prop.test(x = round(xsum), n = n, conf.level = 0.95, correct = FALSE)
+  result$conf.int
+}
+
+calculate.bootstrap.interval <- function(x) {
+  boot_result <- boot(data = x, statistic = mean_func, R = 10000)
+  boot_ci <- boot.ci(boot_result, type = "perc")
+  boot_ci$percent
+}
+
+mean_func <- function(data, indices) {
+  mean(data[indices])
+}
+
+calculate.se <- function(x) {
+  N = length(x)
+  sd = sd(x)
+  se = sd/sqrt(N)
+  se
+}
+
+calculate.mean.dist.km = function(x) round(mean(x)/1000,2)
+
 
 
 

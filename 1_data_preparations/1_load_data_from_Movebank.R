@@ -64,4 +64,4 @@ for (i in 1:length(chicks)) {
 
 for (i in 1:length(acc.data.list)) print(paste(i, acc.data.list[[i]]$individual_local_identifier[1]))
 
-save.image("data/processed/acc.data.from.movebank.0327.RData") # saved on external harddrive to save memory on laptop
+save.image("data/processed/acc.data.from.movebank.0327.RData")
