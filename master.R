@@ -1,5 +1,4 @@
 rm(list=ls())
-#setwd("C:/Users/Tamar Lok/Documents/Analyses/22. Post-fledging parental care in spoonbills/postfledging_care")
 
 source('functions.R')
 
