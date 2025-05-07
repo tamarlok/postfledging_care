@@ -10,8 +10,8 @@ Sys.setenv(TZ="GMT")
 set.seed(3) # to be able to reproduce random processes
 options(digits=10)
 
+# DATA PROCESSING
 # source("1_data_preparations/0_preparing_annotated_begging_data.r")
-
 source("1_data_preparations/1_load_data_from_Movebank.r") # this loads and saves GPS and ACC data in two separate files
 #save.image("data/processed/gps.data.from.movebank.0416.RData")
 #save.image("data/processed/acc.data.from.movebank.0327.RData")
@@ -31,16 +31,13 @@ source("1_data_preparations/4_linking_behaviour_and_habitat.r")
 #save.image("data/processed/chick.parent.behav.habitat.data.0418.RData")
 load("data/processed/chick.parent.behav.habitat.data.0418.RData")
 
+# DATA ANALYSES
 source("2_analyses/2_analyse_distance_contact_departures.r")
 # save.image('data/processed/modelsel.results.0418.RData')
-source("2_analyses/4_analyse_contact_with_other_parents.r")
-
 source("2_analyses/3_feeding_obs_analysis.r")
 
+# VISUALISATION OF RESULTS
 load('data/processed/modelsel.results.0418.RData')
-
 source("3_visualisation/1_plotting_departures_distance_contact.r")
 source("3_visualisation/2_maps_of_spatial_distribution_overall_and_during_contact.r")
-
-
 source("3_visualisation/3_feeding_obs_plots.r")
