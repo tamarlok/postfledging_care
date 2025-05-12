@@ -1,6 +1,6 @@
 # https://cran.r-project.org/web/packages/move/vignettes/browseMovebank.html
 
-loginStored <- movebankLogin(username="tamarlok", password="Vlieland12")
+loginStored <- movebankLogin(username="xxx", password="xxx")
 
 spoonbill_metawad_ID <- getMovebankID("SPOONBILL_METAWAD - Eurasian Spoonbills (Platalea leucorodia, Threskiornithidae) breeding on Schiermonnikoog, The Netherlands", login=loginStored) # contains adult data
 spoonbill_spinoza_ID <- getMovebankID("SPOONBILL_SPINOZA - Eurasian Spoonbills (Platalea leucorodia, Threskiornithidae) born on Schiermonnikoog, The Netherlands", login=loginStored) # contains juvenile data
