@@ -27,6 +27,8 @@ Code in this repository is licensed under the MIT License (see LICENSE).
 
 Data files are licensed under the CC-BY 4.0 License (see DATA_LICENSE).
 
+- - -
+
 Methodological Information
 ==========================
 
@@ -47,7 +49,7 @@ Project Structure
 ├── 2_analyses			<- Code to reproduce analyses 
 └── 3_visualisation	<- Code for visualisation of results
 ```
-  
+
 - - -
 
 Data files
