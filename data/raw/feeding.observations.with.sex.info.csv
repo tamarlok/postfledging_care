@@ -1,0 +1,185 @@
+Chick.code.1,Parent.code,Date,SexParentSel,SexParentMol,SexChickSel,SexChickMol,ChickAge,Location,Latitude,Longitude,RingLocation,RingLatitude,RingLongitude,rnd
+aB[21]/W[21],W/OR,26/06/2006,m,u,m,m,56,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.615052
+aB[21]/W[21],W/OR,14/06/2006,m,u,m,m,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.432676
+aB[E6]/W[E6],W[HY]/aW[HY],07/07/2006,f,u,m,m,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.597992
+aBL/YBYf,W[U9]a/W[U9],06/07/2007,m,u,f,f,72,"Lauwersmeer, Jaap Deensgat",53.38333,6.23333,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.693215
+aBY/YfBY,W[U9]a/W[U9],22/06/2007,m,u,m,m,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.492308
+aBY/YfRY,B[K3]a/R[K3],07/06/2007,f,u,m,m,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.624823
+aGB/YfGR,aW[EZ]/W[EZ],15/06/2007,f,u,f,f,46,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.515632
+aGL/YfGR,G[AU]/aG[AU],15/06/2007,f,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.466056
+aGL/YfGR,G[AU]/aG[AU],17/06/2007,f,u,m,m,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.320962
+aGL/YfGR,G[AU]/aG[AU],18/06/2007,f,u,m,m,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.801388
+aGN/NfPR,RYfR/RaY,18/07/2016,u,u,u,u,65,"Neeltje Jans, Inlaag",51.6268,3.7207,"Neeltje Jans, duingebied",51.6263,3.6924,0.794885
+aGR/NfGR,,30/08/2018,NA,NA,u,u,68,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Rottumerplaat, Not specified",53.53333,6.45,0.474277
+aGY/NfGN,RW[KY]/aW[KY],04/07/2016,u,u,u,u,58,"Neeltje Jans, Inlaag",51.6268,3.7207,"Neeltje Jans, duingebied",51.6263,3.6924,0.563593
+aLB/GLYf,B[P]/O[Y]a,08/06/2007,f,u,m,m,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.35253
+aLB/GLYf,B[P]/O[Y]a,06/06/2007,f,u,m,m,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.994201
+aLG/BRYf,B[K7]a/R[K7],22/06/2007,m,u,f,f,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.737832
+aLR/LRYf,R[AN]/aY[AN],06/06/2007,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.38598
+aLR/LRYf,R[AN]/aY[AN],17/06/2007,f,u,m,m,48,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.16903
+aLY/YfRY,aG[NN]/G[NN],06/06/2007,f,u,m,m,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.477199
+aNN/NNfY,LBY/aBYf,21/08/2018,NA,NA,m,m,77,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.601163
+aNY/RNfR,,02/08/2018,NA,NA,m,m,82,"Rottumerplaat, bij de toren",53.5334,6.5052,"Rottumerplaat, Not specified",53.53333,6.45,0.813911
+aO[BC]/O[BC],B[D]/B[H]a,11/07/1999,u,u,u,u,65,"Terschelling, Groede",53.4,5.43333,"Terschelling, Boschplaat 2e d.",53.41667,5.46667,0.134206
+aO[DE]/O[DE],aB[E]/OG,13/07/1999,m,u,u,u,61,"Terschelling, Groede",53.4,5.43333,"Terschelling, Boschplaat 1e d.",53.41667,5.45,0.938085
+aO[ER]/O[ER],B[P]/GW,13/07/1999,u,u,u,u,68,"Terschelling, Groede",53.4,5.43333,"Terschelling, Boschplaat 1e d.",53.41667,5.45,0.408246
+aPG/PNfN,aW[KX]/B[KX],08/08/2017,f,f,m,m,40,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.516234
+aPG/PNfR,,21/08/2018,NA,NA,m,m,87,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.251937
+aRB/YfLB,B[L6]a/R[L6],17/06/2007,m,u,m,m,45,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.161958
+aRG/YNfG,NfPP/aNR,21/08/2018,m,m,m,m,88,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.204985
+aRL/RGYf,aG[DN]/G[DN],17/06/2007,f,u,m,m,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.643309
+aRP/GNfY,,21/08/2018,NA,NA,f,f,95,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.640065
+aRP/RNfG,,22/08/2017,NA,NA,f,f,72,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.574705
+aW[E5]/B[E5],B[L6]a/R[L6],13/07/2006,m,u,f,f,57,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.548037
+aW[E5]/B[E5],B[L6]a/R[L6],26/06/2006,m,u,f,f,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.115328
+aW[L8]/B[L8],G[P8]/aG[P8],13/06/2006,m,m,m,m,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.386877
+aW[L8]/B[L8],G[P8]/aG[P8],10/06/2006,m,m,m,m,35,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.951272
+aW[L8]/B[L8],G[P8]/aG[P8],29/06/2006,m,m,m,m,54,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.66609
+aW[L9]/B[L9],W[U9]a/W[U9],26/06/2006,m,u,m,m,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.248142
+aW[V4]/B[V4],aG010/W020,26/06/2006,m,u,m,m,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.575683
+aW[Z4]/B[Z4],aG[L6]/G[L6],26/06/2006,NA,NA,f,f,50,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.221388
+aW[Z4]/B[Z4],aG[L6]/G[L6],12/06/2006,NA,NA,f,f,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.128145
+aYfB/BGB,R[BC]/aY[BC],06/06/2007,m,u,f,f,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.997028
+aYfB/BGB,R[BC]/aY[BC],18/06/2007,m,u,f,f,54,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.369377
+aYfB/BGB,R[BC]/aY[BC],15/06/2007,m,u,f,f,51,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.787202
+aYfB/BGB,R[BC]/aY[BC],17/06/2007,m,u,f,f,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.29069
+aYfB/BRB,B[J]/O[N]a,06/06/2007,m,u,f,f,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.515831
+aYfL/GYR,B[P6]a/R[P6],21/06/2007,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.414474
+aYG/YfLG,W/OR,30/05/2007,m,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.339758
+aYG/YfLG,W/OR,06/06/2007,m,u,m,m,46,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.181295
+aYP/NfRG,W[K7]/W[K7]a,13/07/2016,f,f,m,m,71,"Rottumerplaat, bij de toren",53.5334,6.5052,"Rottumerplaat, Not specified",53.53333,6.45,0.013706
+aYY/NfGR,aLL/YfG,29/08/2016,f,f,u,u,99,"Balgzand, Kuitje",52.938,4.792,"Den Oever, Binnenhaven",52.9258,5.0521,0.105205
+aYY/NfGR,aLL/YfG,13/09/2016,f,f,u,u,114,"Balgzand, Kuitje",52.938,4.792,"Den Oever, Binnenhaven",52.9258,5.0521,0.920203
+B[77]/aW[77],aB/RO,12/06/2006,f,u,m,m,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.595006
+B[77]/aW[77],aB/RO,10/06/2006,f,u,m,m,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.217913
+B[77]/aW[77],aB/RO,13/06/2006,f,u,m,m,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.992885
+B[77]/aW[77],aB/RO,26/06/2006,f,u,m,m,57,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.387543
+B[77]/aW[77],aB/RO,08/06/2006,f,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.446992
+B[J0]/B[J0]a,W/OR,01/06/2000,m,u,f,f,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.14524
+B[J8]/aW[J8],aB[H]/OG,21/06/2006,f,u,m,m,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.767876
+B[KK]/W[KK],B[K7]a/R[K7],13/07/2006,m,u,f,f,50,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.709149
+B[N2]/B[N2]a,RW/aO,01/06/2000,NA,NA,f,f,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.631608
+B[S4]/aW[S4],O[GG]/aO[GG],27/06/2006,u,u,m,m,47,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.45088
+B[X0]/B[X0]a,W/OR,01/06/2000,m,u,f,f,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.741561
+BaR/YfRG,R[PR]/aY[PR],05/06/2007,m,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.67749
+BaR/YfRG,R[PR]/aY[PR],06/06/2007,m,u,m,m,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.578699
+BGB/YaYf,aW[EZ]/W[EZ],06/06/2007,f,u,m,m,35,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.661829
+GNfN/aRP,aBL/BYfR,30/08/2018,m,m,f,f,114,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.955113
+GNfP/aGP,RaYf/GLR,22/08/2017,m,m,f,f,107,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.621774
+GNNf/aNY,YfYG/aGY,30/08/2018,m,m,u,u,99,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.634375
+GW[68]/aB[68],B[6]/O[7]a,26/06/2006,m,u,f,f,56,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.055518
+GYfG/BaL,aG[DN]/G[DN],13/06/2007,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.826108
+LaY/BYfL,B[J]/O[N]a,05/06/2007,m,u,f,f,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.6286
+LaYf/LYL,aG[L6]/G[L6],25/08/2007,NA,NA,f,f,125,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.509389
+LYfa/BRY,aG[J2]/G[J2],06/06/2007,m,u,f,f,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.582498
+NfNY/aRN,B[TU]/aB[TU],25/06/2016,m,u,u,u,53,"Krammer-Volkerak, Slaakeiland",51.6509,4.1876,"Krammer-Volkerak, Slaakeiland",51.6509,4.1876,0.108087
+NGNf/aGP,,21/08/2018,NA,NA,u,u,94,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.797021
+NGNf/aGP,YfLa/YGY,21/08/2018,m,m,u,u,94,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.159756
+OW[23]/aB[23],R[AN]/aY[AN],24/06/2006,f,u,m,m,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.84926
+OW[73]/aB[73],aG[DU]/G[DU],08/06/2006,f,u,m,m,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.744641
+OW[73]/aB[73],aG[DU]/G[DU],10/06/2006,f,u,m,m,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.377126
+OW[73]/aB[73],aG[DU]/G[DU],12/06/2006,f,u,m,m,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.77244
+PGNf/aPY,,21/08/2018,NA,NA,m,m,73,"Lauwersmeer, Achter de Zwarten",53.4,6.21667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.032601
+RaL/YfLB,W[Y4]a/W[Y4],17/06/2007,m,u,f,f,50,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.628277
+RaL/YfLB,W[Y4]a/W[Y4],18/06/2007,m,u,f,f,51,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.405517
+RaY/GRYf,W[SY]/aB[SY],17/06/2007,m,u,m,m,51,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.830338
+RaY/GRYf,W[SY]/aB[SY],06/06/2007,m,u,m,m,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.86427
+RaYf/GLR,R[BC]/aY[BC],06/06/2007,m,u,m,m,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.995925
+RaYf/GLR,R[BC]/aY[BC],22/06/2007,m,u,m,m,58,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.14163
+RGNf/aGN,,15/07/2018,NA,NA,f,f,58,"Texel, Zeeburg",53.15,4.88333,"Texel, de Schorren",53.13333,4.9,0.737776
+RLYf/aBL,aG[CR]/G[CR],19/06/2007,m,u,m,m,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.252579
+RNfG/aPP,BaL/YfRB,08/08/2017,f,f,f,f,94,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.612627
+RYfa/LGL,B[L6]a/R[L6],05/06/2007,m,u,m,m,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.545393
+RYfa/LGL,aB/RO,18/06/2007,f,u,m,m,49,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.242858
+RYfa/LGL,aB/RO,06/06/2007,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.51277
+W[10]/B[10],aB[CS]/B[CS],21/06/2006,m,u,f,f,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.158409
+W[10]/B[10],aB[CS]/B[CS],27/06/2006,m,u,f,f,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.37562
+W[18]/aB[18],G[P3]/G[P3]a,30/06/2006,m,u,f,f,46,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.612284
+W[25]/aB[25],Y[4]/WR,26/06/2006,m,m,f,f,44,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.055959
+W[32]/aB[32],aG[A]/OW,10/06/2006,f,u,f,f,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.244221
+W[32]/aB[32],aG[J2]/G[J2],14/06/2006,m,u,f,f,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.186485
+W[32]/aB[32],aG[A]/OW,14/06/2006,f,u,f,f,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.375421
+W[32]/aB[32],aG[A]/OW,12/06/2006,f,u,f,f,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.234743
+W[32]/aB[32],aG[A]/OW,26/06/2006,f,u,f,f,52,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.067428
+W[47]/aB[47],aY[B]/GO,14/06/2006,m,u,f,f,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.474968
+W[51]/aB[51],aG[X3]/G[X3],29/06/2006,m,u,f,f,35,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.241492
+W[51]/aB[51],aG[X3]/G[X3],13/07/2006,m,u,f,f,49,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.676442
+W[51]/aB[51],aG[X3]/G[X3],07/07/2006,m,u,f,f,43,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.680909
+W[58]/aB[58],G[J9]/G[J9]a,29/06/2006,m,u,f,f,49,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.546541
+W[62]/aB[62],O[GG]/aO[GG],27/06/2006,u,u,f,f,47,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.193152
+W[80]/aB[80],W[E]/O[T]a,13/06/2006,f,u,m,m,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.539718
+W[85]/aB[85],R[CS]/aY[CS],13/07/2006,f,u,f,f,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.098677
+W[91]/aB[91],aG[DR]/G[DR],27/06/2006,m,u,m,m,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.62819
+W[NA1V]/a,,27/08/2019,NA,NA,u,u,86,"Onderdijk, Vooroever",52.76667,5.11667,"Den Oever, De Banaan",52.9454,5.03975,0.234285
+W[NA2B]/a,,11/07/2019,NA,NA,u,u,85,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.096994
+W[NA2B]/a,aYfR/LYG,05/07/2019,u,u,u,u,79,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.659778
+W[NA35]/a,,07/09/2019,NA,NA,m,m,111,"Texel, Utopia",53.11667,4.88333,"Texel, de Schorren",53.13333,4.9,0.042173
+W[NA4C]/a,YfLB/RaG,30/07/2019,m,m,m,m,62,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.963214
+W[NA4C]/a,aYfY/RGY,07/08/2019,f,f,m,m,70,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.610408
+W[NA4C]/a,aYfY/RGY,30/07/2019,f,f,m,m,62,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.638984
+W[NA6X]/a,GRa/YYfL,30/07/2019,u,u,m,m,81,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.080144
+W[NA74]/a,,01/08/2019,NA,NA,m,m,78,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.435833
+W[NACB]/a,GaB/YYfB,30/07/2019,u,u,m,m,47,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.344284
+W[NACB]/a,GYfR/YaY,30/07/2019,m,m,m,m,47,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.985814
+W[NACN]/a,RW[KY]/aW[KY],09/07/2019,u,u,u,u,70,"Wissenkerke, Keihoogte inlaag",51.595,3.745,"Sloegebied, Quarleshaven Schotlandweg",51.4583,3.7082,0.647249
+W[NACN]/a,RW[KY]/aW[KY],17/08/2019,u,u,u,u,109,"Wissenkerke, Keihoogte inlaag",51.595,3.745,"Sloegebied, Quarleshaven Schotlandweg",51.4583,3.7082,0.508298
+W[NACN]/a,RW[KY]/aW[KY],02/07/2019,u,u,u,u,63,"Wissenkerke, Keihoogte inlaag",51.595,3.745,"Sloegebied, Quarleshaven Schotlandweg",51.4583,3.7082,0.429715
+W[NACT]/a,,30/07/2019,NA,NA,f,f,85,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.913065
+W[NALD]/a,,02/08/2019,NA,NA,m,m,79,"Harlingen, Heagewiersterfjild",53.15,5.41667,"Griend, Not specified",53.25,5.25,0.003364
+W[NALF]/a,YfLB/RaG,30/07/2019,m,m,f,f,63,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.756998
+W[NANC]/a,aLR/LYfL,29/05/2019,u,u,u,u,45,"Onderdijk, Vooroever",52.76667,5.11667,"Onderdijk, Vooroever",52.76667,5.11667,0.721428
+W[NASP]/a,,30/07/2019,NA,NA,f,f,68,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.322806
+W[NAUA]/a,,11/07/2019,NA,NA,f,f,55,"Texel, waddijk Oosterend",53.1,4.9,"Texel, de Schorren",53.13333,4.9,0.143507
+W[NAUT]/Ra,L[JT]/aL[JT],21/07/2020,m,u,f,f,66,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.333952
+W[NAUT]/Ra,L[JT]/aL[JT],11/09/2020,m,u,f,f,118,"Onlanden, de Jarrens",53.23333,6.41667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.405681
+W[NAZZ]/a,,08/09/2019,NA,NA,u,u,102,"Den Oever, Het Schor",52.93333,5.03333,"Den Oever, De Banaan",52.9454,5.03975,0.925509
+W[NB9T]/a,L[L0]a/L[L0],25/06/2020,u,u,u,u,66,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.394771
+W[NB9T]/a,L[L0]a/L[L0],28/06/2020,u,u,u,u,69,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.534846
+W[NBHX]/a,NfNG/aNP,24/06/2021,u,u,u,u,67,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.880786
+W[NBJH]/a,NfYR/aRN,02/08/2020,u,u,u,u,75,"Zierikzee, Levensstrijd",51.6411,3.8992,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.119227
+W[NBRS]/a,aYfR/LYG,21/07/2020,u,u,u,u,100,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.960643
+W[NBRS]/a,aYfR/LYG,23/07/2020,u,u,u,u,102,"Balgzand, Balgzandpolder",52.91486,4.80016,"Onderdijk, Vooroever",52.76667,5.11667,0.269162
+W[NBVL]/a,,31/07/2021,NA,NA,u,u,69,"De Onlanden, Middelvennen",53.167,6.4175,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.606878
+W[NC1A]/a,B[GV]/aW[GV],27/08/2021,f,f,u,u,56,"Onlanden, de Jarrens",53.23333,6.41667,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.456997
+W[NC51]/a,,30/06/2023,NA,NA,u,u,53,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.69856
+W[NCJ6]/a,,27/06/2023,NA,NA,u,u,51,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.661802
+W[NCLL]/a,,02/08/2022,NA,NA,u,u,82,"Hellegatsplaten, Not specified",51.6954,4.3813,"Ventjagersplaten, Lebret",51.718,4.334,0.589549
+W[NCN1]/a,W[H4]a/RW[H4],03/06/2022,u,u,u,u,45,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.962521
+W[NCN1]/a,RW[EE]/W[EE],31/05/2022,u,u,u,u,42,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.511405
+W[NCRD]/a,RW[EE]/W[EE],31/05/2022,u,u,u,u,44,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.973983
+W[NCVF]/a,NfYY/aGR,30/07/2022,u,u,u,u,74,"Serooskerke (SD), Flauwers Inlaag",51.68333,3.84166,"Grevelingen, Dwars in den Weg",51.736,3.918,0.300772
+W[NCVF]/a,NfYY/aGR,29/07/2022,u,u,u,u,73,"Serooskerke (SD), Flauwers Inlaag",51.68333,3.84166,"Grevelingen, Dwars in den Weg",51.736,3.918,0.427766
+W[ND1B]/a,B[K7]a/R[K7],21/07/2023,m,u,u,u,67,"Hornhuizen, Lutjewad",53.4103,6.3413,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.010641
+W[ND1B]/a,B[K7]a/R[K7],21/07/2023,m,u,u,u,67,"Groningen, Hornhuizen wad",53.41485,6.3401,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.071759
+W[ND1B]/a,,21/07/2023,NA,NA,u,u,67,"Groningen, Hornhuizen wad",53.41485,6.3401,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.196158
+W[ND5B]/a,aB[82]/B[82],26/06/2022,u,u,u,u,81,"Onderdijk, Vooroever",52.76667,5.11667,"Onderdijk, Vooroever",52.76667,5.11667,0.147646
+W[ND7D]/a,,13/09/2022,NA,NA,u,u,96,"Groninger Kust, Hornhuizen wadrand HVP",53.2441,6.2016,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.643521
+W[ND92]/a,,27/06/2023,NA,NA,u,u,38,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.389683
+W[NDAH]/a,,14/08/2024,NA,NA,u,u,71,"Piaam, Kooiwaard",53.03333,5.4,"Vlieland, Not specified",53.28333,5,0.587647
+W[NDLN]/a,,30/06/2023,NA,NA,u,u,37,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.442946
+W[NDXU]/a,RNfP/aGY,01/07/2023,u,u,u,u,57,"Zierikzee, Levensstrijd",51.6411,3.8992,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.189292
+W[NDXU]/a,,01/07/2023,NA,NA,u,u,57,"Zierikzee, Levensstrijd",51.6411,3.8992,"Ouwerkerk, Ouwerkerkse inlagen",51.616,3.972,0.926062
+W[NF41]/a,aN/NfYY,22/07/2023,NA,NA,u,u,52,"Onderdijk, Vooroever",52.76667,5.11667,"Onderdijk, Vooroever",52.76667,5.11667,0.844634
+W[NF4J]/a,,22/07/2023,NA,NA,u,u,58,"Onderdijk, Vooroever",52.76667,5.11667,"Onderdijk, Vooroever",52.76667,5.11667,0.432062
+W[NFCN]/a,,11/08/2023,NA,NA,u,u,83,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.677493
+W[NFX1]/a,,03/09/2023,NA,NA,u,u,101,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.432154
+W[NFX7]/a,,11/08/2023,NA,NA,u,u,72,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.150141
+W[NFX7]/a,W[NA4B]/a,11/08/2023,m,m,u,u,72,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.347887
+W[NHCT]/a,,26/08/2024,NA,NA,u,u,84,"Hornhuizen, Lutjewad",53.4103,6.3413,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.843958
+W[NHDV]/a,,06/08/2024,NA,NA,u,u,58,"Schiermonnikoog, Westerplas",53.4722,6.1513,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.326661
+W[RU]/B[RU],OW[S6]/W[S6]a,26/06/2006,m,u,f,f,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.068401
+W[V5]/aB[V5],aG[DN]/G[DN],10/06/2006,f,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.59341
+W[V5]/aB[V5],aG[DN]/G[DN],08/06/2006,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.468551
+W[V5]/aB[V5],aG[DN]/G[DN],06/06/2006,f,u,m,m,35,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.237679
+WB[86]/aW[86],aG[DU]/G[DU],07/06/2006,f,u,m,m,36,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.733155
+WB[86]/aW[86],aG[DU]/G[DU],12/06/2006,f,u,m,m,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.042801
+WB[86]/aW[86],aG[DU]/G[DU],10/06/2006,f,u,m,m,39,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.038896
+WB[86]/aW[86],aG[DU]/G[DU],11/06/2006,f,u,m,m,40,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.021851
+WB[86]/aW[86],aG[DU]/G[DU],08/06/2006,f,u,m,m,37,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.80556
+YfLa/GYR,aG[NN]/G[NN],06/06/2007,f,u,f,f,38,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.595922
+YfLa/GYR,aG[NN]/G[NN],15/06/2007,f,u,f,f,47,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.770207
+YfLa/RYB,WB[R0]/O[R0],10/07/2008,f,u,f,f,42,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.261143
+YfLa/YGY,W/OR,06/06/2007,m,u,m,m,41,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.939686
+YfRa/RLY,B[U5]/B[U5]a,22/06/2007,f,f,m,m,53,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.595548
+YNfN/aRN,BYfG/GaY,29/06/2017,m,m,f,f,64,"Leekstermeer, Middelvennen; De Onlanden",53.1714,6.4175,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.737349
+YNfN/aRN,BYfG/GaY,28/06/2017,m,m,f,f,63,"Leekstermeer, Middelvennen; De Onlanden",53.1714,6.4175,"Schiermonnikoog, Oosterkwelder",53.48333,6.25,0.179709
