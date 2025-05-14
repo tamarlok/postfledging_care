@@ -8,6 +8,14 @@ n.feedings.chickage <- table(feeding.obs.pf.chick.uni$ChickAge10)
 chick.age=as.numeric(names(n.feedings.chickage))
 n.obs=as.numeric(n.feedings.chickage)
 
+# first combine the ring location and feeding location into one column, specifying group=colony vs group=feeding
+colony.data = feeding.obs.pf.chick.uni[,c('RingLongitude','RingLatitude')]
+names(colony.data)=c('Longitude','Latitude')
+colony.data$group = 'colony'
+feeding.data = feeding.obs.pf.chick.uni[,c('Longitude','Latitude')]
+feeding.data$group = 'feeding'
+colony.feeding.data = rbind(feeding.data, colony.data)
+
 ### FIGURE 1A & 1B ###
 windows(10,11)
 layout(1:2)
@@ -42,7 +50,7 @@ Fig1C <- ggmap(NL_stamen_terrain) +
   geom_point(data=colony.feeding.data, aes(x=Longitude, y=Latitude, shape=group, color=group), size=4) +
   geom_segment(data = feeding.obs.pf.chick.uni, 
                aes(x = RingLongitude, y = RingLatitude, xend = Longitude, yend = Latitude),
-               size = 1                                  # Set arrow thickness
+               linewidth = 1                                  # Set arrow thickness
   ) +
   scale_shape_manual(values=c(16,17))+
   scale_color_manual(values=c('orange','darkgreen'))+
@@ -52,6 +60,7 @@ Fig1C <- ggmap(NL_stamen_terrain) +
 Fig1C
 
 ### combine figures 1A & 1B with 1C: 
+windows(13,7)
 # panel A
 Fig1A <- function() {
   par(mar=c(1,10,1,3),oma=c(0,0,1,0))
@@ -62,7 +71,7 @@ Fig1A <- function() {
 }
 # panel B
 Fig1B <- function() {
-  par(mar=c(8,10,1,3),oma=c(0,0,0,0))
+  par(mar=c(10,10,1,3),oma=c(0,0,0,0))
   boxdata = boxplot(distance.from.colony~ChickAge10, feeding.obs.pf.chick.uni, xlab="", ylab="Distance from colony (km)", ylim=c(0,43), las=1)
   lines(dist.pred~ChickAgeRel, chick.age.pred)
   text(0.6,43*0.95,"(b)")
@@ -83,7 +92,6 @@ left_column <- plot_grid(Fig1A_grob, Fig1B_grob, ncol = 1, rel_heights = c(1, 1.
 Fig1 <- plot_grid(left_column, Fig1C,
                   ncol = 2,
                   rel_widths = c(1, 1.2))
-windows(13,7)
 Fig1
 ### END FIGURE 1 ###
 

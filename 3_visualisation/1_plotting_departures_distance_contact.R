@@ -107,7 +107,7 @@ data.contacts.behav$prop.foraging.contact.50m <- data.contacts.behav$contact50m.
 
 # calculate mean and 95% CI for overall contact probability per chick age and parent sex:
 prop.contact.age.sexp = ddply(data.contacts[data.contacts$age.chick<100,], .(age.chick, sex.parent), summarize, 
-                              N=length(prop.contact), mean = mean(prop.contact), CImin.Wilson = calculate.Wilson.score.interval(prop.contact)[1], 
+                              N=length(prop.contact), mean = mean(prop.contact), 
                               CImin.boot = calculate.bootstrap.interval(prop.contact)[4], CImax.boot = calculate.bootstrap.interval(prop.contact)[5])
 # only show estimates based on at least 6 different chicks:
 prop.contact.age.mothers = prop.contact.age.sexp[prop.contact.age.sexp$sex.parent=='f' & prop.contact.age.sexp$N>5,]

@@ -1,4 +1,3 @@
-
 # add habitat.simple:
 chick.parent.data.behav.sel$habitat.simple <- "unknown"
 chick.parent.data.behav.sel$habitat.simple[chick.parent.data.behav.sel$habitat%in%c("LM_land","Schier_Kwelder","Schier_Land_Rest","wal_rest_land")] <- "land"

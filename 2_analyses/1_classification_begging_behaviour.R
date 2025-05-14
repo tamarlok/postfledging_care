@@ -1,15 +1,19 @@
 # load annotated begging data:
 annotated.begging.data = read.csv("data/raw/annotated.begging.data.csv", header=T)
 
-# combine annotated begging behaviour with previously annotated behaviours from Lok et al. 2023:
-acc.annotated = read.csv("data/raw/acc.annotated.final.csv", header=T)
-table(acc.annotated$Index) # here Index starts at 0
-# make the Index in this datafile start at 1:
-acc.annotated$Index = acc.annotated$Index+1
+# combine annotated begging behaviour with previously annotated behaviours from Lok et al. 2023 Anim Biotelem available at https://doi.org/10.25850/nioz/7b.b.yd
+acc.soaring <- read.csv("data/raw/visual_annotated_passive_flight_data.csv") 
+acc.video <- read.csv("data/raw/video_annotated_data.csv") 
+behaviours <- read.csv("data/raw/behaviours.csv") # load list of behaviours distinguished during video annotation
+acc.video <- acc.video[,1:10] # remove the video information columns, not needed for analysis
+acc.annotated <- rbind(acc.video, acc.soaring) # combine visual and video annotated data
+acc.annotated$date.time <- ymd_hms(acc.annotated$date.time)
+acc.annotated$behaviour <- as.character(behaviours$behaviour[match(acc.annotated$behaviour.index, behaviours$behaviour.index)]) # add column with behaviour names
+acc.annotated$Index = acc.annotated$Index+1 # make the Index in this datafile start at 1
 acc.annotated$annotation.method = 'video'
 
 # combine the two datasets:
-acc.annotated.comb = rbind(annotated.begging.data, acc.annotated[,c(2:9,11)])
+acc.annotated.comb = rbind(annotated.begging.data, acc.annotated[,names(annotated.begging.data)])
 acc.annotated.comb$behaviour[acc.annotated.comb$behaviour=='shake_feathers']='stand-shake-feathers'
 acc.annotated.comb$behaviour[acc.annotated.comb$behaviour=='preen_tag']='stand-preen'
 acc.annotated.comb$behaviour[acc.annotated.comb$behaviour=='beg_flap']='beg'

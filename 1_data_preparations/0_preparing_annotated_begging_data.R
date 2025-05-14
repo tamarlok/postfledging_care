@@ -18,20 +18,21 @@ acc.data.6381 <- acc.data.6381[hour(acc.data.6381$date_time)%in%8:12,]
 acc.data.6381$Index = acc.data.6381$index
 
 timestamps <- unique(acc.data.6381$date_time)
-table(acc.data.6381$date_time)
 
-#n = 1
-#for (i in timestamps) {
-#  if(n%in%seq(1,length(timestamps),16)) {
-#    windows(12,8)
-#    layout(matrix(1:16,ncol=4))
-#    par(mar=c(0,0,1,0), oma=c(1,1,1,1))
-#  } 
-#    plot(x~Index, acc.data.6381.sel[acc.data.6381.sel$date_time==i,], type='l', col='red', xlim=c(1,200), ylim=c(-1,1), #main=as.POSIXct(i, origin="1970-01-01"), xaxt='n', yaxt='n')
-#    lines(y~Index, acc.data.6381.sel[acc.data.6381.sel$date_time==i,], type='l', col='blue')
-#    lines(z~Index, acc.data.6381.sel[acc.data.6381.sel$date_time==i,], type='l', col='green')
-#    n=n+1
-#}
+# plot the potentially relevant accelerometer data (takes quite a while, therefore, I blocked this code):
+pdf('output/accelerometer.plots.6381.pdf')
+n = 1
+for (i in timestamps[1:20]) {
+  if(n%in%seq(1,length(timestamps),16)) {
+    layout(matrix(1:16,ncol=4))
+    par(mar=c(0,0,1,0), oma=c(1,1,1,1))
+  } 
+    plot(x~Index, acc.data.6381[acc.data.6381$date_time==i,], type='l', col='red', xlim=c(1,200), ylim=c(-1,1), main=as.POSIXct(i, origin="1970-01-01"), xaxt='n', yaxt='n')
+    lines(y~Index, acc.data.6381[acc.data.6381$date_time==i,], type='l', col='blue')
+    lines(z~Index, acc.data.6381[acc.data.6381$date_time==i,], type='l', col='green')
+    n=n+1
+}
+dev.off()
 
 # annotate the acceleration data manually, based on what was seen on the videos:
 acc.data.6381$behaviour = NA
@@ -98,15 +99,13 @@ acc.data.6381$annotation.method = 'none'
 acc.data.6381$annotation.method[!is.na(acc.data.6381$behaviour)] = 'video'
 
 # Although we have no video-footage of it, the signals are so clear, that we can safely say that between 
-# 10:39:05 and 10:42:07 everything is begging. And also between 11:06:29 and 11:08:00 (see ppt)
+# 10:39:05 and 10:42:07 everything is begging. And also between 11:06:29 and 11:08:00
 acc.data.6381$behaviour[acc.data.6381$date_time>=ymd_hms("2018-07-05 10:39:05") &
                           acc.data.6381$date_time<=ymd_hms("2018-07-05 10:46:54")] = "beg"
 
 acc.data.6381$behaviour[acc.data.6381$date_time>=ymd_hms("2018-07-05 11:06:29") &
                           acc.data.6381$date_time<=ymd_hms("2018-07-05 11:08:00")] = "beg"
 
-
-table(acc.data.6381$behaviour)
 
 # check that correct parts were annotated by plotting them:
 
@@ -119,19 +118,21 @@ acc.data.6381$ann.value = -1
 
 timestamps.sel <- timestamps[which(timestamps>=ymd_hms("2018-07-05 10:39:05") & timestamps<=ymd_hms("2018-07-05 11:09:30") |
                                      timestamps>=ymd_hms("2018-07-04 10:02:10") & timestamps<=ymd_hms("2018-07-04 10:03:50"))]
-#n = 1
-#for (i in timestamps.sel) {
-#  if(n%in%seq(1,length(timestamps.sel),16)) {
-#    windows(12,8)
-#    layout(matrix(1:16,ncol=4))
-#    par(mar=c(0,0,1,0), oma=c(1,1,1,1))
-#  } 
-#  plot(x~Index, acc.data.6381[acc.data.6381$date_time==i,], type='l', col='red', xlim=c(1,200), ylim=c(-1,1), main=as.POSIXct(i, origin="1970-01-01"), xaxt='n', yaxt='n')
-#  lines(y~Index, acc.data.6381[acc.data.6381$date_time==i,], col='blue')
-#  lines(z~Index, acc.data.6381[acc.data.6381$date_time==i,], col='green')
-#  points(ann.value~Index, acc.data.6381[acc.data.6381$date_time==i,], col=acc.data.6381$ann.behav.col[acc.data.6381$date_time==i])
-#  n=n+1
-#}
+
+pdf('output/accelerometer.plots.6381.with.annotation.pdf')
+n = 1
+for (i in timestamps.sel) {
+  if(n%in%seq(1,length(timestamps.sel),16)) {
+    layout(matrix(1:16,ncol=4))
+    par(mar=c(0,0,1,0), oma=c(1,1,1,1))
+  } 
+  plot(x~Index, acc.data.6381[acc.data.6381$date_time==i,], type='l', col='red', xlim=c(1,200), ylim=c(-1,1), main=as.POSIXct(i, origin="1970-01-01"), xaxt='n', yaxt='n')
+  lines(y~Index, acc.data.6381[acc.data.6381$date_time==i,], col='blue')
+  lines(z~Index, acc.data.6381[acc.data.6381$date_time==i,], col='green')
+  points(ann.value~Index, acc.data.6381[acc.data.6381$date_time==i,], col=acc.data.6381$ann.behav.col[acc.data.6381$date_time==i])
+  n=n+1
+}
+dev.off()
 
 # 
 annotated.begging.data = acc.data.6381[!is.na(acc.data.6381$behaviour),c('device_info_serial','date_time','Index','x','y','z','behaviour','annotation.method')]

@@ -1,17 +1,18 @@
 # https://cran.r-project.org/web/packages/move/vignettes/browseMovebank.html
 
-loginStored <- movebankLogin(username="xxx", password="xxx")
+loginStored <- movebankLogin(username="xxx", password="xxx") # fill in your Movebank credentials
 
+# access to the relevant Movebank studies will be granted to researchers upon reasonable request. Please contact the data managers of these studies for this. 
 spoonbill_metawad_ID <- getMovebankID("SPOONBILL_METAWAD - Eurasian Spoonbills (Platalea leucorodia, Threskiornithidae) breeding on Schiermonnikoog, The Netherlands", login=loginStored) # contains adult data
 spoonbill_spinoza_ID <- getMovebankID("SPOONBILL_SPINOZA - Eurasian Spoonbills (Platalea leucorodia, Threskiornithidae) born on Schiermonnikoog, The Netherlands", login=loginStored) # contains juvenile data
 
 # get reference data from the two studies:
 refdata_adults <- getMovebankReferenceTable(spoonbill_metawad_ID,login=loginStored)
 refdata_juvs <- getMovebankReferenceTable(spoonbill_spinoza_ID,login=loginStored)
-# contains separate refdata for GPS and accelerometer data...
+# contains separate reference data for GPS and accelerometer data
 
-# import parent offspring relationships to only download data of those individuals:
-parent_offspring_data <- read.csv("data/raw/Parent_offspring_relationships.csv")
+# import parent-offspring relationships to only download data of those individuals:
+parent_offspring_data <- read.csv("data/raw/parent.offspring.data.csv")
 parents <- unique(parent_offspring_data$parentID)
 chicks <- unique(parent_offspring_data$chickID)
 
@@ -39,7 +40,7 @@ for (i in 1:length(chicks)) {
 
 for (i in 1:length(gps.data.list)) print(gps.data.list[[i]]$individual.local.identifier[1])
 
-save.image("data/processed/gps.data.from.movebank.0327.RData")
+save.image("data/processed/gps.data.from.movebank.RData")
 
 rm(gps.data.list) # so that ACC data is saved separately (to save memory)
 ### (2) download ACC data (as this takes much longer, and is not needed for calculating distance between parent and chick and departure dates on autumn migration):
@@ -64,4 +65,4 @@ for (i in 1:length(chicks)) {
 
 for (i in 1:length(acc.data.list)) print(paste(i, acc.data.list[[i]]$individual_local_identifier[1]))
 
-save.image("data/processed/acc.data.from.movebank.0327.RData")
+save.image("data/processed/acc.data.from.movebank.RData")

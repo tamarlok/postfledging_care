@@ -143,7 +143,7 @@ chick.parent.data <- from.list.to.df(chick.parent.data.list)
 rm(chick.parent.data.list, parent_data, parent1_data, parent2_data, parents_data, gps.data.ref)
 
 # add column with age of chick:
-chick.biometrics <- read.csv('data/raw/bird.data.juvs.csv')
+chick.biometrics <- read.csv('data/raw/chick.biometrics.csv')
 chick.biometrics$start_deployment <- dmy(chick.biometrics$start_deployment)
 chick.biometrics$age_deployment <- round(-log(-log(chick.biometrics$P8/247))/0.095 + 19.3,0)
 chick.parent.data <- merge(chick.parent.data, chick.biometrics[,c('birdID','start_deployment','age_deployment','birthyear')], by.x='birdID.chick', by.y='birdID')

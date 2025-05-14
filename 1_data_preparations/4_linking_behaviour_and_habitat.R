@@ -26,7 +26,7 @@ chick.parent.data.behav.sel$behaviour.parent.contact = paste(chick.parent.data.b
 ### LINKING HABITAT OF CHICK
 
 # load the habitat shapefile of Schiermonnikoog and surroundings, made by the RUG Geodienst:
-schier_new84_sel <- read_sf(dsn = "data/raw/study_area_shapefile/study_area_shapefile.shp", crs="+proj=latlong +datum=WGS84")
+schier_new84_sel <- read_sf(dsn = "data/raw/study_area_shapefile/study_area_shapefile.shp", crs="+proj=latlong +datum=WGS84") # file available at https://doi.org/10.5281/zenodo.10804302
 schier_new84_sel$habitat <- as.character(schier_new84_sel$Habitat)
 schier_new84_sel$habitat[is.na(schier_new84_sel$habitat)] <- "unknown"
 schier_new84_sel$habitat[schier_new84_sel$habitat=="Wadgeulen_Diep"|schier_new84_sel$habitat=="Wadgeulen_Ondiep"|schier_new84_sel$habitat=="Wadplaten"|schier_new84_sel$habitat=="Wad_Kweldergeul_Brak"]="waddenzee" 
