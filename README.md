@@ -78,13 +78,13 @@ Details for: annotated.begging.data.csv
 	* behaviour: behaviour determined from video or from graphical inspection, distinguishing begging for food at the parent (beg), shaking feathers 
 	* annotation.method: video = annotation through video footage, graphical = estimation of behaviour (only done for begging) based on the visual pattern in the accelerometer data and the confirmed proximity to the parent (based on field observation). 
 
-Details for: chick.parent.data.csv
+Details for: parent.offspring.data.csv
 --------------------------
 * Description: a comma-delimited file containing the information of GPS-tagged parents, their GPS-tagged chick and potentially other siblings 
 
 * Format: .csv
 
-* Size: 1,055 kB
+* Size: 1 kB
 
 * Variables:
 	* parentID: unique identifier of the parent
