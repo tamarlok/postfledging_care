@@ -91,7 +91,6 @@ Details for: chick.biometrics.csv
 	* tracker_mass: mass of the tracker in grams 
 
 Details for: feeding.observations.with.sex.info.csv
-
 --------------------------
 * Description: a comma-delimited file containing the information on the feeding observations of colour-ringed chicks born in The Netherlands
 
