@@ -17,7 +17,7 @@ Accompanying manuscript
 =====================
 
 * Paper Title: Eurasian Spoonbill chicks receive parental care up to several months after fledging, but not into migration
-* Preprint Identifier: not yet available
+* Preprint Identifier: https://doi.org/10.1101/2025.05.15.654226
 * Authors: Tamar Lok, P. de Goeij, E. Rakhimberdiev, T. Piersma, W. Vansteelant
 
 - - -
