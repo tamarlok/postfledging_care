@@ -1,6 +1,10 @@
 ### LINKING BEHAVIOUR OF CHICKS AND PARENTS:
 gps.behav.data <- from.list.to.df(gps.behav.data.list)
 rm(gps.behav.data.list)
+
+write.csv(gps.behav.data, 'data/processed/gps.behav.data.csv', row.names = F)
+gps.behav.data <- read.csv('data/processed/gps.behav.data.csv', row.names = 'X')
+
 gps.behav.data$datetime_CEST <- with_tz(gps.behav.data$date_time, tz="Europe/Amsterdam")
 chick.parent.data.behav = merge(chick.parent.data.contact, gps.behav.data[,c('birdID','datetime_CEST','behaviour')], by.x=c('birdID.chick','datetime.chick'), by.y=c('birdID','datetime_CEST'), all.x=T)
 names(chick.parent.data.behav)[names(chick.parent.data.behav)=='behaviour'] = 'behaviour.chick'
