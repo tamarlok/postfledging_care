@@ -20,21 +20,16 @@ source("2_analyses/1_classification_begging_behaviour.r")
 load("data/processed/acc.data.from.movebank.RData")
 load("data/processed/model.classification.begging.RData")
 source("1_data_preparations/3_process_acc_data.r")
-#save.image("data/processed/gps.behav.data.0527.RData")
-load("data/processed/gps.behav.data.0527.RData")
 
 source("1_data_preparations/4_determine_departure_dates_and_distance_parent_offspring.r")
-#save.image("data/processed/chick.parent.contact.data.0528.RData")
-load("data/processed/chick.parent.contact.data.0528.RData")
+#save.image("data/processed/chick.parent.contact.data.RData")
 source("1_data_preparations/5_linking_behaviour_and_habitat.r")
-# save.image("data/processed/chick.parent.behav.habitat.data.0528.RData")
-load("data/processed/chick.parent.behav.habitat.data.0527.RData")
+# save.image("data/processed/chick.parent.behav.habitat.data.RData")
 
 # DATA ANALYSES
 source("2_analyses/2_analyse_distance_contact_departures.r")
 source("2_analyses/3_feeding_obs_analysis.r")
-# save.image('data/processed/modelsel.results.0528.2.RData')
-load('data/processed/modelsel.results.0528.2.RData')
+# save.image('data/processed/modelsel.results.RData')
 
 # VISUALISATION OF RESULTS
 source("3_visualisation/1_plotting_departures_distance_contact.r")

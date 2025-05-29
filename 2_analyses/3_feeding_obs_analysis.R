@@ -44,8 +44,8 @@ table(parents$SexParentSel) # 23 females, 34 males and 17 with unknown sex (16 i
 rnd.max.chick = aggregate(rnd~Chick.code.1, feeding.obs.pf, max)
 # merge with original file:
 feeding.obs.pf.chick.uni = merge(feeding.obs.pf, rnd.max.chick) # 127 unique observations of known-age chicks. 
-# write.csv(feeding.obs.pf.chick.uni, 'feeding.obs.pf.chick.uni.csv', row.names=F)
-# feeding.obs.pf.chick.uni = read.csv(feeding.obs.pf.chick.uni, 'feeding.obs.pf.chick.uni.csv')
+# write.csv(feeding.obs.pf.chick.uni, 'data/processed/feeding.obs.pf.chick.uni.csv', row.names=F)
+# feeding.obs.pf.chick.uni = read.csv('data/processed/feeding.obs.pf.chick.uni.csv')
 nfeeds.age10 = aggregate(freq~ChickAge10, feeding.obs.pf.chick.uni, sum)
 m.nfeeds.age10 = glm(freq~ChickAge10, data=nfeeds.age10, family="poisson")
 # Calculate overdispersion statistic
