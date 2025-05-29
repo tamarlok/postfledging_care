@@ -1,3 +1,7 @@
+windows()
+chick.parent.data.contact$year = year(chick.parent.data.contact$datetime.chick)
+chick.parent.data.behav.sel$year = year(chick.parent.data.behav.sel$datetime.chick)
+
 # add habitat.simple:
 chick.parent.data.behav.sel$habitat.simple <- "unknown"
 chick.parent.data.behav.sel$habitat.simple[chick.parent.data.behav.sel$habitat%in%c("LM_land","Schier_Kwelder","Schier_Land_Rest","wal_rest_land")] <- "land"
@@ -11,19 +15,6 @@ aggregate(age.chick~chick.parent+sex.chick+sex.parent, chick.parent.data.contact
 # what is the maximum chick age when there was still contact between parent and chick in the selected data?
 max.age.contact.sex = aggregate(age.chick~chick.parent+sex.chick+sex.parent, chick.parent.data.contact[chick.parent.data.contact$contact==1,], max) # here, contact is defined as a distance of less than 10m between chick and parent.
 max(max.age.contact.sex$age.chick) # 136 days. Therefore, we run the analysis until 136 days
-median(max.age.contact.sex$age.chick)
-range(max.age.contact.sex$age.chick)
-
-# what is the interval between last contact and departure day of chick and parent?
-chick.parent.data.contact$days.until.chick.departure = date(chick.parent.data.contact$departure.datetime.chick)-date(chick.parent.data.contact$datetime.chick)
-chick.parent.data.contact$days.until.chick.departure[chick.parent.data.contact$days.until.chick.departure>300]=NA
-chick.parent.data.contact$days.until.parent.departure = date(chick.parent.data.contact$departure.datetime.parent)-date(chick.parent.data.contact$datetime.parent)
-
-dates.last.contacts = unique(merge(chick.parent.data.contact, max.age.contact.sex)[,c('birdID.chick','birdID.parent','chick.parent','age.chick','days.until.chick.departure','days.until.parent.departure')])
-median(na.omit(dates.last.contacts$days.until.chick.departure))
-range(na.omit(dates.last.contacts$days.until.chick.departure))
-median(na.omit(dates.last.contacts$days.until.parent.departure))
-range(na.omit(dates.last.contacts$days.until.parent.departure))
 
 ### 1. TOTAL AMOUNT OF CONTACT ###
 
@@ -40,16 +31,16 @@ chick.data.age.yesno[56:66,]
 # standardize chick age so that model convergence gets easier:
 chick.parent.data.contact.sel$z.age = (chick.parent.data.contact.sel$age.chick-mean(chick.parent.data.contact.sel$age.chick))/sd(chick.parent.data.contact.sel$age.chick)
 # create a column with categorical year:
-chick.parent.data.contact.sel$yearf <- as.factor(chick.parent.data.contact.sel$birthyear)
+chick.parent.data.contact.sel$yearf <- as.factor(chick.parent.data.contact.sel$year)
 table(chick.parent.data.contact.sel$contact)
 
 # run full model:
 m.contact.chickagernd <- glmer(contact~sex.parent+sex.chick+z.age+yearf+(z.age|birdID.chick), data=chick.parent.data.contact.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5))) # this gives the same result as (1+z.age|birdID.chick) as random effect
 
 simOutput.m.contact.chickagernd <- simulateResiduals(m.contact.chickagernd, plot=F)
-plot(simOutput.m.contact.chickagernd) # although the KS-test is highly significant (likely due to the very large sample size), the QQ plot looks very neat, suggesting no serious deviations between observed and predicted residuals. 
+#plot(simOutput.m.contact.chickagernd) # although the KS-test is highly significant (likely due to the very large sample size), the QQ plot looks very neat, suggesting no serious deviations between observed and predicted residuals. 
 # Dispersion test is N.S. -> no overdispersion
-testZeroInflation(simOutput.m.contact.chickagernd) # N.S.
+#testZeroInflation(simOutput.m.contact.chickagernd) # N.S.
 # testTemporalAutocorrelation(simOutput.m.contact.chickagernd, time = chick.parent.data.contact.sel$datetime.chick)
 
 summary(m.contact.chickagernd) # sigma intercept: 0.75, meaning that a "typical" range encompassing 95% of the variation in the probability of post-fledging parental care among chicks (at log-scale) would be about 4σ = 4*0.75 = 3, which, except for the year2017 effect, is much larger than the estimated fixed effects. 
@@ -74,16 +65,16 @@ table(chick.parent.data.behav.sel$nlocs.behav) # only days with at least 100 joi
 # make the same selection for chick.parent.data.behav.sel in relation to ages analysed:
 chick.parent.data.behav.sel <- chick.parent.data.behav.sel[which(chick.parent.data.behav.sel$age.chick>=35 & chick.parent.data.behav.sel$age.chick<=136),] 
 chick.parent.data.behav.sel$z.age = (chick.parent.data.behav.sel$age.chick-mean(chick.parent.data.behav.sel$age.chick))/sd(chick.parent.data.behav.sel$age.chick)
-chick.parent.data.behav.sel$yearf <- as.factor(chick.parent.data.behav.sel$birthyear)
+chick.parent.data.behav.sel$yearf <- as.factor(chick.parent.data.behav.sel$year)
 chick.parent.data.behav.sel$begging <- ifelse(chick.parent.data.behav.sel$behaviour.chick=='beg',1,0)
 chick.parent.data.behav.sel$contact.begging = chick.parent.data.behav.sel$contact * chick.parent.data.behav.sel$begging
 table(chick.parent.data.behav.sel$contact.begging)
 
 m.begging.contact <- glmer(contact.begging~sex.parent+sex.chick+z.age+yearf+(z.age|birdID.chick), data=chick.parent.data.behav.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))
 simOutput.m.begging.contact <- simulateResiduals(m.begging.contact, plot=F)
-plot(simOutput.m.begging.contact) # why do I get a warning here, whereas not with the 'overall contact' model on:
+#plot(simOutput.m.begging.contact) # why do I get a warning here, whereas not with the 'overall contact' model on:
 # DHARMa:testOutliers with type = binomial may have inflated Type I error rates for integer-valued distributions. To get a more exact result, it is recommended to re-run testOutliers with type = 'bootstrap'. See ?testOutliers for details
-testZeroInflation(simOutput.m.begging.contact) # N.S.
+#testZeroInflation(simOutput.m.begging.contact) # N.S.
 
 derivs <- m.begging.contact@optinfo$derivs
 max(abs(derivs$gradient))
@@ -130,12 +121,12 @@ m.dist.nest.gamma = glmer(dist.nest.chick.km~sex.parent+sex.chick+z.age+(z.age|b
 sim_res <- simulateResiduals(fittedModel = m.dist.nest.gamma)
 # Plot residuals
 windows()
-plot(sim_res)
+#plot(sim_res)
 # Although everything is significant, the plots look reasonably OK. 
 # But let's check if log-transformed values giving better results:
 m.dist.nest.log = lmer(log(dist.nest.chick.km)~sex.parent+sex.chick+z.age+(z.age|birdID.chick), chick.data.actual.contact, na.action='na.fail')
 sim_res <- simulateResiduals(fittedModel = m.dist.nest.log)
-plot(sim_res)
+#plot(sim_res)
 # slightly, but not really, therefore, we stick to the Gamma distribution. 
 
 modsel.dist.nest = dredge(m.dist.nest.gamma)
@@ -153,12 +144,10 @@ write.csv(m.dist.nest.tidy, paste("output/TableS6 - Global model estimates dista
 chick.parent.data.contact.sel$contact50m = ifelse(chick.parent.data.contact.sel$distance<50,1,0)
 
 # calculate the total number of contact moments when using 10 or 50 m:
-sum(chick.parent.data.contact.sel$contact) # total: 8694
+sum(chick.parent.data.contact.sel$contact) # total number of 10 m contacts
 table(chick.parent.data.contact.sel$contact, chick.parent.data.contact.sel$chick.parent)
 rowMeans(table(chick.parent.data.contact.sel$contact, chick.parent.data.contact.sel$chick.parent))[2] # mean number of contacts per chick-parent pair: 543
-sum(chick.parent.data.contact.sel$contact50m) # total: 19717
-table(chick.parent.data.contact.sel$contact50m, chick.parent.data.contact.sel$chick.parent)
-rowMeans(table(chick.parent.data.contact.sel$contact50m, chick.parent.data.contact.sel$chick.parent))[2] # 1232
+sum(chick.parent.data.contact.sel$contact50m) # total number of 50 m contacts
 
 ### 1. TOTAL AMOUNT OF CONTACT 50 M
 m.contact50m.chickagernd <- glmer(contact50m~sex.parent+sex.chick+z.age+yearf+(z.age|birdID.chick), data=chick.parent.data.contact.sel, family='binomial', na.action='na.fail', control = glmerControl(optimizer = "bobyqa", optCtrl = list(maxfun = 2e5)))

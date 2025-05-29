@@ -39,46 +39,49 @@ lines(dist.pred~ChickAgeRel, chick.age.pred)
 text(0.6,43*0.95,"(b)")
 axis(1,9,120)
 mtext("Chick age (days)",1,2.5)
+dev.off()
 # Adding sample size is not needed, as this is reflected by the top panel showing the number of feeding observations!
 
 ### FIGURE 1C ###
 # Map of colony and feeding locations:
 source("C:/Users/Tamar Lok/Documents/R/Load_API_keys_for_using_maps.R")
-NL_stamen_terrain <- get_stadiamap(c(left = 3, bottom = 50.7, right = 7.5, top = 53.7), maptype="stamen_terrain") 
-windows(8,8)
+NL_stamen_terrain <- get_stadiamap(c(left = 3, bottom = 50.7, right = 7, top = 53.7), maptype="stamen_terrain") 
+#windows(8,8)
 Fig1C <- ggmap(NL_stamen_terrain) +
   geom_point(data=colony.feeding.data, aes(x=Longitude, y=Latitude, shape=group, color=group), size=4) +
   geom_segment(data = feeding.obs.pf.chick.uni, 
                aes(x = RingLongitude, y = RingLatitude, xend = Longitude, yend = Latitude),
-               linewidth = 1                                  # Set arrow thickness
+               linewidth = 0.6                                  # Set arrow thickness
   ) +
   scale_shape_manual(values=c(16,17))+
   scale_color_manual(values=c('orange','darkgreen'))+
   labs(x="Longitude (°E)", y = "Latitude (°N)")+
   theme_minimal()+
-  theme(legend.title=element_blank())
-Fig1C
+  theme(legend.title=element_blank(),
+        legend.text = element_text(size=14),
+        axis.title=element_text(size=16))
 
 ### combine figures 1A & 1B with 1C: 
-windows(13,7)
+#windows(13,7)
 # panel A
 Fig1A <- function() {
   par(mar=c(1,10,1,3),oma=c(0,0,1,0))
-  plot(chick.age, n.obs, xlab="Chick age (days)", ylab="# observed feeding events", las=1, cex=2, xaxt='n',xlim=c(35,135), ylim=c(0,55))
+  plot(chick.age, n.obs, xlab="", ylab="# observed feeding events", las=1, cex=2, xaxt='n',xlim=c(35,135), ylim=c(0,55), cex.lab=1.3)
   lines(n.obs.pred~ChickAge10, chick.age.pred)
   axis(1,at=seq(40,130,10),labels=F)
-  text(36,55*0.95,"(a)")
+  text(36,55*0.95,"(a)",cex=1.2)
 }
 # panel B
 Fig1B <- function() {
   par(mar=c(10,10,1,3),oma=c(0,0,0,0))
-  boxdata = boxplot(distance.from.colony~ChickAge10, feeding.obs.pf.chick.uni, xlab="", ylab="Distance from colony (km)", ylim=c(0,43), las=1)
+  boxdata = boxplot(distance.from.colony~ChickAge10, feeding.obs.pf.chick.uni, xlab="", ylab="Distance from colony (km)", ylim=c(0,43), cex.lab=1.3, las=1)
   lines(dist.pred~ChickAgeRel, chick.age.pred)
-  text(0.6,43*0.95,"(b)")
-  mtext("Chick age (days)",1,2.5)
+  text(0.6,43*0.95,"(b)",cex=1.2)
+  mtext("Chick age (days)",1,2.5,cex=1.2)
 }
 
 # Convert base R plots to grob:
+pdf("output/Fig1.pdf", width=12, height=7)
 grid.newpage()
 grid.echo(Fig1A)
 Fig1A_grob <- grid.grab()
@@ -93,11 +96,13 @@ Fig1 <- plot_grid(left_column, Fig1C,
                   ncol = 2,
                   rel_widths = c(1, 1.2))
 Fig1
+dev.off()
+
 ### END FIGURE 1 ###
 
 ### FIGURE S1 ###
 # number of observed feeding events in relation to chick and parent sex
-windows(8,4)
+pdf("output/FigS1.pdf", width=8, height=4)
 layout(matrix(1:2,ncol=2))
 par(mar=c(1,3,0,0), oma=c(4,2,1,1))
 
@@ -108,7 +113,7 @@ lines(as.numeric(colnames(freq.age.sex)), freq.age.sex[1,], col='red')
 points(as.numeric(colnames(freq.age.sex)), freq.age.sex[2,], col='blue', cex=1.5)
 lines(as.numeric(colnames(freq.age.sex)), freq.age.sex[2,], col='blue')
 legend("topright", bty="n", legend=c("female chick","male chick"), col=c("red","blue"), pch=21)
-mtext("Number of observed feeding events",2,3)
+mtext("Number of observed feeding events",2,3, cex=1.2)
 
 # (B) number of feedings in relation to chick age, coloured by parent sex
 freq.age.parentsex = table(feeding.obs.parentsex.known$SexParentSel, feeding.obs.parentsex.known$ChickAge10)
@@ -117,6 +122,6 @@ lines(as.numeric(colnames(freq.age.parentsex)), freq.age.parentsex[1,], col='red
 points(as.numeric(colnames(freq.age.parentsex)), freq.age.parentsex[2,], col='blue', cex=1.5)
 lines(as.numeric(colnames(freq.age.parentsex)), freq.age.parentsex[2,], col='blue')
 legend("topright", bty="n", legend=c("female parent","male parent"), col=c("red","blue"), pch=21)
-mtext("Chick age (days)",1,2,outer=T)
-
+mtext("Chick age (days)",1,2, cex=1.2,outer=T)
+dev.off()
 ### END FIGURE S1 ###

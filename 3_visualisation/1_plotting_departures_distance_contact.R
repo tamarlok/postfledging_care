@@ -4,7 +4,7 @@
 parent_chick_info = parent_offspring_nest_data[,c('parentID','chickID','n_chicks','nth_chick','latitude','longitude')]
 names(parent_chick_info)[c(1,2,5,6)] = c('birdID.parent','birdID.chick','lat.nest','lon.nest')
 # add most recent deployment date + sex for parents
-gps_refdata_all$mortality_date[is.na(gps_refdata_all$mortality_date)]=ymd('2099-12-31')
+gps_refdata_sel = read.csv("data/raw/metadata.tagged.birds.csv")
 deployment.mortality.date.sex.bird = aggregate(start_deployment~birdID+sex+mortality_date, gps_refdata_all, max)
 deployment.mortality.date.sex.bird$mortality_date[deployment.mortality.date.sex.bird$mortality_date==ymd('2099-12-31')]=""
 parent_chick_info = merge(parent_chick_info, deployment.mortality.date.sex.bird, by.x='birdID.parent', by.y='birdID')
@@ -37,11 +37,28 @@ mean(parent_chick_info$ndays.behav[parent_chick_info$ndays.behav>0])
 
 write.csv(parent_chick_info[order(parent_chick_info$start_deployment.y),], 'output/TableS1 - Chick-parent pair info.csv')
 
+# what is the maximum chick age when there was still contact between parent and chick in the selected data?
+max.age.contact.sex = aggregate(age.chick~chick.parent+sex.chick+sex.parent, chick.parent.data.contact[chick.parent.data.contact$contact==1,], max) # here, contact is defined as a distance of less than 10m between chick and parent.
+range(max.age.contact.sex$age.chick)
+median(max.age.contact.sex$age.chick)
+
+# what is the interval between last contact and departure day of chick and parent?
+chick.parent.data.contact$days.until.chick.departure = date(chick.parent.data.contact$departure.datetime.chick)-date(chick.parent.data.contact$datetime.chick)
+chick.parent.data.contact$days.until.chick.departure[chick.parent.data.contact$days.until.chick.departure>300]=NA
+chick.parent.data.contact$days.until.parent.departure = date(chick.parent.data.contact$departure.datetime.parent)-date(chick.parent.data.contact$datetime.parent)
+
+dates.last.contacts = unique(merge(chick.parent.data.contact, max.age.contact.sex)[,c('birdID.chick','birdID.parent','chick.parent','age.chick','days.until.chick.departure','days.until.parent.departure')])
+median(na.omit(dates.last.contacts$days.until.chick.departure))
+range(na.omit(dates.last.contacts$days.until.chick.departure))
+median(na.omit(dates.last.contacts$days.until.parent.departure))
+range(na.omit(dates.last.contacts$days.until.parent.departure))
+
+
 # what was the age of chick departure? 
 chick.age.departure.unique = unique(merge(departure.dates.chick.parent[,c('chickID','departure.datetime.chick')], chick.biometrics[,c('birdID','start_deployment','age_deployment')], by.x='chickID', by.y='birdID'))
 chick.age.departure.unique$age_departure = yday(chick.age.departure.unique$departure.datetime.chick)-yday(chick.age.departure.unique$start_deployment)+chick.age.departure.unique$age_deployment
 median(na.omit(chick.age.departure.unique$age_departure)) # 116 d
-range(na.omit(chick.age.departure.unique$age_departure)) # 108 - 138 d
+range(na.omit(chick.age.departure.unique$age_departure)) # 108 - 139 d
 
 ## Calculate first-year survival based on the chicks used in the analysis:
 first.year.survival = unique(parent_chick_info[,c('birdID.chick','start_deployment.y','mortality_date.y')])
@@ -54,6 +71,7 @@ first.year.survival$survived.first.year[first.year.survival$mortality_date-first
 N = length(first.year.survival$survived.first.year)
 mean1 = mean(first.year.survival$survived.first.year)
 se1 = sqrt(mean1*(1-mean1)/N)
+round(c(mean1, se1),2)
 # survival GPS-tagged: 0.53 +/- 0.13 SE
 # survival colour-ringed (Lok et al. 2013): 0.56 +/- 0.04
 mean2=0.56
@@ -84,22 +102,22 @@ weighted.pred.pop = aggregate(cbind(pred.contact.10.weight, pred.contact.50.weig
 # averaged over males and females:
 # 10 m:
 mean.pred.pop.10 = aggregate(pred.contact.10.weight~age.chick, weighted.pred.pop, mean)
-mean.pred.pop.10[mean.pred.pop.10$age.chick==40,] # 11.4%
-mean.pred.pop.10[mean.pred.pop.10$age.chick==90,] # 2.5%
+mean.pred.pop.10[mean.pred.pop.10$age.chick==40,] # 8.0%
+mean.pred.pop.10[mean.pred.pop.10$age.chick==90,] # 1.9%
 # 50 m
 mean.pred.pop.50 = aggregate(pred.contact.50.weight~age.chick, weighted.pred.pop, mean)
-mean.pred.pop.50[mean.pred.pop.50$age.chick==40,] # 14.0%
-mean.pred.pop.50[mean.pred.pop.50$age.chick==90,] # 3.1%
+mean.pred.pop.50[mean.pred.pop.50$age.chick==40,] # 13.2%
+mean.pred.pop.50[mean.pred.pop.50$age.chick==90,] # 4.2%
 
 ### Preparation for Figure 2 ###
-data.contacts <- aggregate(cbind(freq,contact,contact50m)~birdID.chick+birdID.parent+chick.parent+age.chick+sex.chick+sex.parent+sex.chick.parent+yday+birthyear, chick.parent.data.contact.sel, sum)
-data.contacts <- data.contacts[order(data.contacts$birthyear, data.contacts$birdID.chick, data.contacts$yday),]
+data.contacts <- aggregate(cbind(freq,contact,contact50m)~birdID.chick+birdID.parent+chick.parent+age.chick+sex.chick+sex.parent+sex.chick.parent+yday+year, chick.parent.data.contact.sel, sum)
+data.contacts <- data.contacts[order(data.contacts$year, data.contacts$birdID.chick, data.contacts$yday),]
 data.contacts$prop.contact <- data.contacts$contact/data.contacts$freq
 data.contacts$prop.contact.50m <- data.contacts$contact50m/data.contacts$freq
 
 ## also do this for behaviour-specific contacts:
-data.contacts.behav <- aggregate(cbind(freq,contact.begging,contact50m.begging, contact.foraging, contact50m.foraging)~birdID.chick+birdID.parent+chick.parent+age.chick+sex.chick+sex.parent+sex.chick.parent+yday+birthyear, chick.parent.data.behav.sel, sum)
-data.contacts.behav <- data.contacts.behav[order(data.contacts.behav$birthyear, data.contacts.behav$birdID.chick, data.contacts.behav$yday),]
+data.contacts.behav <- aggregate(cbind(freq,contact.begging,contact50m.begging, contact.foraging, contact50m.foraging)~birdID.chick+birdID.parent+chick.parent+age.chick+sex.chick+sex.parent+sex.chick.parent+yday+year, chick.parent.data.behav.sel, sum)
+data.contacts.behav <- data.contacts.behav[order(data.contacts.behav$year, data.contacts.behav$birdID.chick, data.contacts.behav$yday),]
 data.contacts.behav$prop.begging.contact <- data.contacts.behav$contact.begging/data.contacts.behav$freq
 data.contacts.behav$prop.begging.contact.50m <- data.contacts.behav$contact50m.begging/data.contacts.behav$freq
 data.contacts.behav$prop.foraging.contact <- data.contacts.behav$contact.foraging/data.contacts.behav$freq
@@ -164,12 +182,13 @@ N.prop.contact = table(data.contacts$age.chick[data.contacts$age.chick<=91], dat
 N.dist.contact = table(data.contacts$age.chick[data.contacts$age.chick<=91 & data.contacts$contact>0], data.contacts$sex.parent[data.contacts$age.chick<=91 & data.contacts$contact>0])
 
 ### FIGURE 2 ###
-windows(12,8)
+pdf("output/Fig2.pdf", width=12,height=8)
+#windows(12,8)
 layout(matrix(c(1,2,3,4,3,4,3,4,3,4,3,4,5,6,5,6,5,6,5,6,5,6), ncol=2, byrow=T))
 par(mar=c(0,1,0,0), oma=c(5,4,2,1), xaxs='i',las=0)
 ### (A) Sample sizes of chicks with a mother
 barplot(rbind(N.dist.contact[,'f'], N.prop.contact[,'f']-N.dist.contact[,'f']), space=0, col=c('coral4','lightcoral'), ylim=c(0,8), xaxt='n', yaxt='n')
-axis(2, at=c(2,4,6,8), las=1)
+axis(2, at=c(2,4,6,8), las=1, cex.axis=1.2)
 mtext("with mother",line=0.4)
 mtext("N",2,3.5)
 ### (B) Sample sizes of chicks with a father
@@ -179,52 +198,56 @@ mtext("with father", line=0.4)
 ymax=0.3
 xmin=34.5
 xmax=91.5
-plotCI(prop.contact.age.mothers$age.chick-0.07, prop.contact.age.mothers$mean, li=prop.contact.age.mothers$CImin.boot, ui=prop.contact.age.mothers$CImax.boot, sfrac=0, xlim=c(xmin,xmax), ylim=c(0,ymax), pch=21, pt.bg="lightcoral", col='coral4', xlab="", ylab='', xaxt='n', las=1)
+plotCI(prop.contact.age.mothers$age.chick-0.07, prop.contact.age.mothers$mean, li=prop.contact.age.mothers$CImin.boot, ui=prop.contact.age.mothers$CImax.boot, sfrac=0, xlim=c(xmin,xmax), ylim=c(0,ymax), pch=21, pt.bg="lightcoral", col='coral4', xlab="", ylab='', xaxt='n', las=1, cex=1.2, cex.axis=1.2)
 lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='f',], col='lightcoral') 
 mtext("Proportion of contact",2,3.5)
 axis(1,at=seq(40,90,10),labels=F)
-text(xmax-2,0.985*ymax,"(a)")
+text(xmax-2,0.98*ymax,"(a)", cex=2)
 ## (B) Overall probability of contact with the father
-plotCI(prop.contact.age.fathers$age.chick+0.07, prop.contact.age.fathers$mean, li=prop.contact.age.fathers$CImin.boot, ui=prop.contact.age.fathers$CImax.boot, sfrac=0, xlim=c(xmin,xmax), ylim=c(0,0.3), pch=21, pt.bg="lightskyblue", col='lightskyblue4', xlab="", ylab="", xaxt='n', yaxt='n')
+plotCI(prop.contact.age.fathers$age.chick+0.07, prop.contact.age.fathers$mean, li=prop.contact.age.fathers$CImin.boot, ui=prop.contact.age.fathers$CImax.boot, sfrac=0, xlim=c(xmin,xmax), ylim=c(0,0.3), pch=21, pt.bg="lightskyblue", col='lightskyblue4', xlab="", ylab="", xaxt='n', yaxt='n', cex=1.2)
 lines(pred.contact.weight~age.chick, weighted.pred.pop[weighted.pred.pop$sex.parent=='m',], col='lightskyblue') 
 axis(1,at=seq(40,90,10),labels=F)
 axis(2,at=seq(0,0.3,0.05),labels=F)
-text(xmax-2,0.985*ymax,"(b)")
+text(xmax-2,0.98*ymax,"(b)", cex=2)
 ## (C) Distance to the nest during contact with mother 
 ymax=13
-plotCI(distance.contact.age.mothers$age.chick, distance.contact.age.mothers$mean, uiw=1.96*distance.contact.age.mothers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightcoral', col='coral4', las=1, xlim=c(xmin,xmax), ylim=c(0,ymax))
+plotCI(distance.contact.age.mothers$age.chick, distance.contact.age.mothers$mean, uiw=1.96*distance.contact.age.mothers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightcoral', col='coral4', las=1, xlim=c(xmin,xmax), ylim=c(0,ymax), cex=1.2, cex.axis=1.2)
 lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='f',], col='lightcoral') 
 mtext("Distance to nest during contact (km)",2,3.5)
-text(xmax-2,0.985*ymax,"(c)")
+text(xmax-2,0.98*ymax,"(c)", cex=2)
 ## (D) Distance to the nest during contact with father 
-plotCI(distance.contact.age.fathers$age.chick, distance.contact.age.fathers$mean, uiw=1.96*distance.contact.age.fathers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightskyblue', col='lightskyblue4', las=1, xlim=c(xmin,xmax), ylim=c(0,ymax), yaxt='n')
+plotCI(distance.contact.age.fathers$age.chick, distance.contact.age.fathers$mean, uiw=1.96*distance.contact.age.fathers$se, sfrac=0, xlab='', ylab='', pch=21, pt.bg='lightskyblue', col='lightskyblue4', las=1, xlim=c(xmin,xmax), ylim=c(0,ymax), yaxt='n', cex=1.2, cex.axis=1.2)
 lines(pred.dist.pop~age.chick, pred.data.dist[pred.data.dist$sex.parent=='m',], col='lightskyblue') 
 axis(2,at=seq(0,12,2),labels=F)
 mtext("Chick age (days)", 1, 3, outer=T)
-text(xmax-2,0.985*ymax,"(d)")
+text(xmax-2,0.98*ymax,"(d)", cex=2)
+dev.off()
 ### END FIGURE 2 ###
 
 ### FIGURE 3 ###
-windows(7,7)
-plot(departure.datetime.chick.2018~departure.datetime.parent.2018, departure.dates.chick.parent, xlab='Departure date parent', ylab='Departure date chick', pch=21, bg=c('white','grey')[sex.parent.n], cex=2, xlim=c(ymd_hms('2018-09-12 00:00:00'),ymd_hms('2018-10-12 00:00:00')), ylim=c(ymd_hms('2018-09-12 00:00:00'),ymd_hms('2018-10-12 00:00:00')), xaxt='n', yaxt='n') 
+pdf("output/Fig3.pdf", width=7, height=7)
+# windows(7,7)
+plot(departure.datetime.chick.2018~departure.datetime.parent.2018, departure.dates.chick.parent, xlab='Departure date parent', ylab='Departure date chick', pch=21, bg=c('white','grey')[sex.parent.n], cex=2, xlim=c(ymd_hms('2018-09-12 00:00:00'),ymd_hms('2018-10-12 00:00:00')), ylim=c(ymd_hms('2018-09-12 00:00:00'),ymd_hms('2018-10-12 00:00:00')), xaxt='n', yaxt='n', cex.lab=1.2) 
 lines(c(ymd_hms('2018-09-01 00:00:00'),ymd_hms('2018-10-31 00:00:00')),c(ymd_hms('2018-09-01 00:00:00'),ymd_hms('2018-10-31 00:00:00')), lty='dashed') 
 axis(1, at=c(ymd_hms('2018-09-20 00:00:00'),ymd_hms('2018-09-30 00:00:00'),ymd_hms('2018-10-10 00:00:00')), labels=c('Sep-20','Sep-30','Oct-10'))
 axis(2, at=c(ymd_hms('2018-09-20 00:00:00'),ymd_hms('2018-09-30 00:00:00'),ymd_hms('2018-10-10 00:00:00')), labels=c('Sep-20','Sep-30','Oct-10'))
 legend("bottomright", legend=c("mother","father"), pt.cex=2, cex=1.2, pch=21, pt.bg=c('white','grey'))
+dev.off()
 ### END FIGURE 3 ###
 
 
 ### FIGURE 5 ###
 # Plot distance to the nest of chicks and parents and add dots at the moments where the chick was in contact with the parent
 # For this plot, use the raw data, so that the departure on autumn migration is also visible. This is the file chick.parent.data.departure 
-chick.parent.data.contact = chick.parent.data.contact[order(chick.parent.data.contact$birthyear, chick.parent.data.contact$birdID.chick),]
+chick.parent.data.contact = chick.parent.data.contact[order(chick.parent.data.contact$year, chick.parent.data.contact$birdID.chick),]
 
 chick.parent.data.departure$dist.nest.parent = round(distGeo(as.matrix(cbind(chick.parent.data.departure$longitude.parent, chick.parent.data.departure$latitude.parent)),
                                                            as.matrix(cbind(chick.parent.data.departure$lon.nest, chick.parent.data.departure$lat.nest))),0)
 chick.parent.data.departure$dist.nest.chick = round(distGeo(as.matrix(cbind(chick.parent.data.departure$longitude.chick, chick.parent.data.departure$latitude.chick)),
                                                        as.matrix(cbind(chick.parent.data.departure$lon.nest, chick.parent.data.departure$lat.nest))),0)
 
-windows(16,8)
+pdf("output/Fig5.pdf", width=16, height=8)
+#windows(16,8)
 layout(matrix(1:16, nrow=4, byrow=T))
 par(mar=c(1,1,0,0), oma=c(4,4,1,1))
 panelnr=0
@@ -237,12 +260,13 @@ for (i in unique(chick.parent.data.contact$chick.parent)) { # but only for the c
   # overlay a dashed line for the parents again, so that the similar departure of 6295 and 6288 is visible as well as a similar long-distance flight by 6354-6298 (both >120d, so only overlay this part so that for the rest, the line of the chick is better visible:
   lines(dist.nest.parent~age.chick, data = chick.parent.data.departure[chick.parent.data.departure$chick.parent==i&chick.parent.data.departure$age.chick>120,], col=c('orange','lightskyblue')[sex.parent.n], lty='dashed')
   points(dist.nest.chick~age.chick, data = chick.parent.data.departure[chick.parent.data.departure$chick.parent==i&chick.parent.data.departure$contact==1,], col='red')
-  if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,5000), labels=seq(0,ymax,5000)/1000, las=1)
-  if (panelnr %in% 13:16) axis(1, at=seq(40,140,20), las=1)
-  text(35,0.95*ymax,i, adj=0)
+  if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,10000), labels=seq(0,ymax,10000)/1000, las=1, cex.axis=1.2)
+  if (panelnr %in% 13:16) axis(1, at=seq(40,140,20), las=1, cex.axis=1.2)
+  text(35,0.95*ymax, i, adj=0, cex=1.5)
 }
-mtext("Distance to the nest (km)",2,2,outer=T)
-mtext("Chick age (days)",1,2,outer=T)
+mtext("Distance to the nest (km)",2,2,outer=T, cex=1.3)
+mtext("Chick age (days)",1,2,outer=T, cex=1.3)
+dev.off()
 ### END FIGURE 5 ###
 
 
@@ -258,12 +282,13 @@ chick.age.departure$age_departure_chick = chick.age.departure$departure_day_chic
 chick.age.departure$age_departure_parent = chick.age.departure$departure_day_parent - chick.age.departure$hatch_day
 
 # model predictions at chick-level for overall contact:
-data.contacts$yearf <- as.factor(data.contacts$birthyear)
+data.contacts$yearf <- as.factor(data.contacts$year)
 data.contacts$z.age <- (data.contacts$age.chick-mean(chick.parent.data.contact.sel$age.chick))/sd(chick.parent.data.contact.sel$age.chick)
 data.contacts$pred.contact <- predict(m.contact.parsim, newdata=data.contacts, type='response')
 
 ### FIGURE S2 - Individual variation in probability of contact ###
-windows(12,8)
+pdf("output/FigS2.pdf", width=12, height=8)
+#windows(12,8)
 layout(matrix(1:16, nrow=4, byrow=T))
 par(mar=c(1,1,0,0), oma=c(4,4,1,1))
 panelnr = 0
@@ -290,25 +315,26 @@ for(i in unique(data.contacts$birdID.chick)) {
   if(length(age_departure_father)>0) lines(rep(age_departure_father,2),c(0,ymax),col='lightskyblue4',lty='dashed')
   if(length(age_departure_mother)>0) lines(rep(age_departure_mother,2),c(0,ymax),col='coral4', lty='dashed')
   if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,0.1), las=1)
-  if (panelnr %in% 11:14) axis(1, at=seq(40,140,10), las=1)
+  if (panelnr %in% 11:14) axis(1, at=seq(40,140,20), las=1)
   # box(col=chickcol)
-  text(40,0.95*ymax,paste(i," (",data.chick$birthyear[1],")",sep=""), adj=0, col=chickcol)
+  text(40,0.95*ymax,paste(i," (",data.chick$year[1],")",sep=""), adj=0, col=chickcol)
 }
 plot(1:2,1:2,type='n', xaxt='n', yaxt='n', bty='n') # make an empty plot to put the legend on top of it:
 legend(1,1.7,legend=c("female","male"), text.col=c("coral4","lightskyblue4"), bty='n',cex=2, pch=21, pt.bg=c("lightcoral","lightskyblue"), col=c("coral4","lightskyblue4"))
-mtext("Chick age (days)",1,2,outer=T)
-mtext("Proportion of contact",2,2,outer=T)
+mtext("Chick age (days)",1,2,outer=T,cex=1.2)
+mtext("Proportion of contact",2,2,outer=T,cex=1.2)
+dev.off()
 # strong year effect in the amount of contact between chick and parent. In 2017, there was hardly any post-fledging parental care!
 ### END FIGURE S2 ###
 
 # model predictions at chick-level for behaviour-specific contact:
-data.contacts.behav$yearf <- as.factor(data.contacts.behav$birthyear)
+data.contacts.behav$yearf <- as.factor(data.contacts.behav$year)
 data.contacts.behav$z.age <- (data.contacts.behav$age.chick-mean(chick.parent.data.behav.sel$age.chick))/sd(chick.parent.data.behav.sel$age.chick)
 data.contacts.behav$pred.begging.contact <- predict(m.begging.contact.parsim, newdata=data.contacts.behav, type='response')
 
 ### FIGURE S3 ###
 ## Plot individual variation in probability of begging at parent and foraging close to parent:
-windows(12,8)
+pdf("output/FigS3.pdf", width=12, height=8)
 layout(matrix(1:16, nrow=4, byrow=T))
 par(mar=c(1,1,0,0), oma=c(4,4.5,1,1))
 panelnr = 0
@@ -334,21 +360,21 @@ for(i in unique(data.contacts.behav$birdID.chick)) {
   if(length(age_departure_father)>0) lines(rep(age_departure_father,2),c(0,ymax),col='lightskyblue4',lty='dashed')
   if(length(age_departure_mother)>0) lines(rep(age_departure_mother,2),c(0,ymax),col='coral4', lty='dashed')
   if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,0.01), las=1)
-  if (panelnr %in% 11:14) axis(1, at=seq(40,140,10), las=1)
+  if (panelnr %in% 11:14) axis(1, at=seq(40,140,20), las=1)
   # box(col=chickcol)
-  text(40,0.95*ymax,paste(i," (",data.chick$birthyear[1],")",sep=""), adj=0, col=chickcol)
+  text(40,0.95*ymax,paste(i," (",data.chick$year[1],")",sep=""), adj=0, col=chickcol)
 }
 plot(1:2,1:2,type='n', xaxt='n', yaxt='n', bty='n') # make an empty plot to put the legend on top of it:
 legend(1,1.7,legend=c("female","male"), text.col=c("coral4","lightskyblue4"), bty='n',cex=2, pch=21, pt.bg=c("lightcoral","lightskyblue"), col=c("coral4","lightskyblue4"))
-mtext("Chick age (days)",1,2,outer=T)
-mtext("Proportion of begging at parent",2,2.5,outer=T)
-# strong year effect in the amount of contact between chick and parent. In 2017, there was hardly any post-fledging parental care!
+mtext("Chick age (days)",1,2,outer=T,cex=1.2)
+mtext("Proportion of begging at parent",2,2.5,outer=T,cex=1.2)
+dev.off()
 ### END FIGURE S3 ###
 
 data.contacts.behav$pred.foraging.contact <- predict(m.foraging.contact.parsim, newdata=data.contacts.behav, type='response')
 
 ### FIGURE S4 ###
-windows(12,8)
+pdf("output/FigS4.pdf", width=12, height=8)
 layout(matrix(1:16, nrow=4, byrow=T))
 par(mar=c(1,1,0,0), oma=c(4,4.5,1,1))
 panelnr = 0
@@ -373,16 +399,16 @@ for(i in unique(data.contacts.behav$birdID.chick)) {
   lines(rep(age_departure_chick,2),c(0,ymax))
   if(length(age_departure_father)>0) lines(rep(age_departure_father,2),c(0,ymax),col='lightskyblue4',lty='dashed')
   if(length(age_departure_mother)>0) lines(rep(age_departure_mother,2),c(0,ymax),col='coral4', lty='dashed')
-  if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,0.01), las=1)
-  if (panelnr %in% 11:14) axis(1, at=seq(40,140,10), las=1)
+  if (panelnr %in% c(1,5,9,13)) axis(2, at=seq(0,ymax,0.02), las=1)
+  if (panelnr %in% 11:14) axis(1, at=seq(40,140,20), las=1)
   # box(col=chickcol)
-  text(40,0.95*ymax,paste(i," (",data.chick$birthyear[1],")",sep=""), adj=0, col=chickcol)
+  text(40,0.95*ymax,paste(i," (",data.chick$year[1],")",sep=""), adj=0, col=chickcol)
 }
 plot(1:2,1:2,type='n', xaxt='n', yaxt='n', bty='n') # make an empty plot to put the legend on top of it:
 legend(1,1.7,legend=c("female","male"), text.col=c("coral4","lightskyblue4"), bty='n',cex=2, pch=21, pt.bg=c("lightcoral","lightskyblue"), col=c("coral4","lightskyblue4"))
-mtext("Chick age (days)",1,2,outer=T)
-mtext("Proportion of foraging with parent",2,2.5,outer=T)
-# strong year effect in the amount of contact between chick and parent. In 2017, there was hardly any post-fledging parental care!
+mtext("Chick age (days)",1,2,outer=T,cex=1.2)
+mtext("Proportion of foraging with parent",2,2.5,outer=T,cex=1.2)
+dev.off()
 ### END FIGURE S4 ###
 
 ### Make a barplot with the behaviour of the chick and whether or not it was in contact with a parent. 

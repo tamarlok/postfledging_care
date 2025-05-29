@@ -1,9 +1,9 @@
 "","effect","group","term","estimate","std.error"
-"1","fixed",NA,"(Intercept)",0.970960714072775,0.292836379581366
-"2","fixed",NA,"sex.parentm",0.25813307686844,0.0411365499806607
-"3","fixed",NA,"sex.chickm",-0.13169970729527,0.36536885625558
-"4","fixed",NA,"z.age",1.87066549179714,0.227387528148344
-"5","ran_pars","birdID.chick","sd__(Intercept)",0.811004305093473,NA
-"6","ran_pars","birdID.chick","cor__(Intercept).z.age",0.524047143954625,NA
-"7","ran_pars","birdID.chick","sd__z.age",0.830355631797,NA
-"8","ran_pars","Residual","sd__Observation",1.05200182794267,NA
+"1","fixed",NA,"(Intercept)",0.971422927222581,0.293115639471224
+"2","fixed",NA,"sex.parentm",0.253308726967662,0.0410942051820076
+"3","fixed",NA,"sex.chickm",-0.132863837247598,0.365469457834381
+"4","fixed",NA,"z.age",1.86722829961786,0.226843361806709
+"5","ran_pars","birdID.chick","sd__(Intercept)",0.81161279904161,NA
+"6","ran_pars","birdID.chick","cor__(Intercept).z.age",0.525716470225546,NA
+"7","ran_pars","birdID.chick","sd__z.age",0.827994901446972,NA
+"8","ran_pars","Residual","sd__Observation",1.0517523261685,NA

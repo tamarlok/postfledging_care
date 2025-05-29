@@ -1,7 +1,7 @@
 # statistical analysis of the number and distance from the colony of observed feedings.
 # analyse number of feedings with poisson regression
 
-read.csv('data/raw/feeding.observations.with.sex.info.csv')
+feeding.obs.pf = read.csv('data/raw/feeding.observations.with.sex.info.csv')
 
 # which years are included?
 table(year(feeding.obs.pf$Date))
@@ -44,6 +44,8 @@ table(parents$SexParentSel) # 23 females, 34 males and 17 with unknown sex (16 i
 rnd.max.chick = aggregate(rnd~Chick.code.1, feeding.obs.pf, max)
 # merge with original file:
 feeding.obs.pf.chick.uni = merge(feeding.obs.pf, rnd.max.chick) # 127 unique observations of known-age chicks. 
+# write.csv(feeding.obs.pf.chick.uni, 'feeding.obs.pf.chick.uni.csv', row.names=F)
+# feeding.obs.pf.chick.uni = read.csv(feeding.obs.pf.chick.uni, 'feeding.obs.pf.chick.uni.csv')
 nfeeds.age10 = aggregate(freq~ChickAge10, feeding.obs.pf.chick.uni, sum)
 m.nfeeds.age10 = glm(freq~ChickAge10, data=nfeeds.age10, family="poisson")
 # Calculate overdispersion statistic
@@ -54,6 +56,8 @@ dispersion_ratio # underdispersion... no problem!
 plot(fitted(m.nfeeds.age10)~residuals(m.nfeeds.age10))
 
 summary(m.nfeeds.age10) # highly significant effect of chick age.
+max(feeding.obs.pf.chick.uni$ChickAge) # max age: 125 days old
+
 # effect of chick sex (while accounting for effect chick age):
 # selecting only obs where chick sex is known
 feeding.obs.chicksex.known <- feeding.obs.pf.chick.uni[feeding.obs.pf.chick.uni$SexChickSel%in%c('f','m'),]

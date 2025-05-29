@@ -322,29 +322,29 @@ link.chick.parent.data <- function(chick_data, parent_data, behaviour=FALSE) {
   if (behaviour==T) {
     # prepare chick data (do not remove NA's, as latitude and speed are not measured for the GPS data sent via GSM)
     chick_data = chick_data[order(chick_data$datetime_CEST),
-                                      c('birdID','tagID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex','behaviour')]
-    names(chick_data) = c('birdID.chick', 'tagID.chick', 'datetime.chick', 'latitude.chick', 'longitude.chick','altitude.chick',
+                                      c('birdID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex','behaviour')]
+    names(chick_data) = c('birdID.chick', 'datetime.chick', 'latitude.chick', 'longitude.chick','altitude.chick',
                           'ground.speed.chick','sex.chick','behaviour.chick')
     # prepare parent data
     parent_data = parent_data[order(parent_data$datetime_CEST),
-                                      c('birdID','tagID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex','behaviour')]
-    names(parent_data) = c('birdID.parent', 'tagID.parent', 'datetime.parent', 'latitude.parent', 'longitude.parent','altitude.parent',
+                                      c('birdID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex','behaviour')]
+    names(parent_data) = c('birdID.parent', 'datetime.parent', 'latitude.parent', 'longitude.parent','altitude.parent',
                            'ground.speed.parent','sex.parent','behaviour.parent')
   }
   else {
     # prepare chick data (do not remove NA's, as latitude and speed are not measured for the GPS data sent via GSM)
     chick_data = chick_data[order(chick_data$datetime_CEST),
-                                    c('birdID','tagID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex')]
-    names(chick_data) = c('birdID.chick', 'tagID.chick', 'datetime.chick', 'latitude.chick', 'longitude.chick','altitude.chick','ground.speed.chick','sex.chick')
+                                    c('birdID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex')]
+    names(chick_data) = c('birdID.chick', 'datetime.chick', 'latitude.chick', 'longitude.chick','altitude.chick','ground.speed.chick','sex.chick')
     # prepare parent data
-    parent_data = parent_data[order(parent_data$datetime_CEST),c('birdID','tagID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex')]
-    names(parent_data) = c('birdID.parent', 'tagID.parent', 'datetime.parent', 'latitude.parent', 'longitude.parent','altitude.parent','ground.speed.parent','sex.parent')
+    parent_data = parent_data[order(parent_data$datetime_CEST),c('birdID','datetime_CEST','latitude','longitude','altitude','ground.speed','sex')]
+    names(parent_data) = c('birdID.parent', 'datetime.parent', 'latitude.parent', 'longitude.parent','altitude.parent','ground.speed.parent','sex.parent')
   }
   # link chick and parent data
   chick_data$closest_datetime <- sapply(chick_data$datetime.chick, findClosestDatetime, datetime_vec = parent_data$datetime.parent)
   chick_parent_data <- merge(chick_data, parent_data, by.x = "closest_datetime", by.y = "datetime.parent", all.x = TRUE)
   # in case there is no data of the parent available (as all closest_datetimes have already been linked), fill in the relevant columns with parent information:
-  chick_parent_data[,c('birdID.parent','tagID.parent','sex.parent')] = parent_data[1,c('birdID.parent','tagID.parent','sex.parent')]
+  chick_parent_data[,c('birdID.parent','sex.parent')] = parent_data[1,c('birdID.parent','sex.parent')]
   chick_parent_data$datetime.parent = as.POSIXct(chick_parent_data$closest_datetime, tz="Europe/Amsterdam", origin="1970-01-01 00:00:00")
   # calculate distance between chick and parent
   chick_parent_data$distance <- round(distGeo(matrix(c(chick_parent_data$longitude.chick, chick_parent_data$latitude.chick), ncol=2, byrow=F), 
